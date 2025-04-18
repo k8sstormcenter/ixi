@@ -50,11 +50,11 @@ tasks:
 
   webapp:
     run: |
-      [[ -z $(kubectl get pods -l app=ping-app -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}' | grep -v True) ]]
+      [[ "$(kubectl get pods -l app=webapp -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}')" == "True"  ]]
   
   profilecomplete:
     run: |
-      [[ "$(kubectl get applicationprofile pod-ping-app -o jsonpath='{.metadata.annotations.kubescape\.io/status}')" == "completed" ]]
+      [[ "$(kubectl get applicationprofile pod-webapp -o jsonpath='{.metadata.annotations.kubescape\.io/status}')" == "completed" ]]
 
 
 ---

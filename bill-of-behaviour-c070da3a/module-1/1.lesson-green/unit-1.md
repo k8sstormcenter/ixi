@@ -1,7 +1,7 @@
 ---
 kind: unit
 
-title: Setup the app
+title: Create a Bill of Behaviour - Setup the app
 
 name: simple-app-profile
 ---
@@ -9,14 +9,23 @@ name: simple-app-profile
 Pretending we are the supplier company of the software `webapp` , which is a single container php application,
 we will now create a simple BoB for our product.
 
-For this, we need to:  (TODO: make this tableofcontnets)
+For this, we need to:  
  
-* 1 deploy it
-* 2 execute/trigger all known behaviour (by e.g. using a load test or more old-fashioned cypress tests)
-* 3 profile the benign behaviour
-* 4 export the profile
+* Deploy the application
+* Produce traffic: execute/trigger all known behaviour (by e.g. using a load test or more old-fashioned cypress tests)
+* Profile the benign behaviour
+* Export the profile
+  
 
-## 0 Clone repo
+
+## 0 Clone repository for this lab 
+Make sure, you have this lab open in chrome. Safari doesnt work. 
+
+Please hover over the bottom right corner of the below box, when the `Copy` symbol appears, click it and `Paste` it into the right hand `terminal` (you need to activate the playground first). In Windows, you need to right click or configure what keybindings your browser is listening to.
+
+You now are running a slim flavour of `kubernetes` called k0s, in Module 3, we will run a different flavour, called k3s. This is to showcase, that a vendor and a consumer will likely use different infrastructure.
+To safe you the config, the following repo contains settings that work [WIP: 🤣 will work 😂 ]
+
 ```git
 git clone https://github.com/k8sstormcenter/honeycluster.git
 cd honeycluster
@@ -35,12 +44,15 @@ Waiting for you to clone the repo
 Congrats! 
 ::
 
+
 ## 1 Deploy
 Using one of the `kubescape-demo`** apps, we deploy a ping utility called `webapp` that has
 
-a) desired functionality: it pings things  
-
-b) undesired functionality: it is vulnerable to injection
+*   **a) Desired functionality:** it pings things.
+*   **b) Undesired functionality:** it is vulnerable to injection (runtime is compromised).
+    *   _This is to mimic a CVE in your app._
+*   **c) Tampering with the artefact:** In module 2, we will additionally tamper with the artifact and make it create a backdoor (supply chain is compromised).
+    *   _This is to mimic a SupplyChain corruption between vendor and you._
 
 ```sh
 cd traces/kubescape-verify/attacks/webapp/
@@ -59,10 +71,10 @@ chmod +x setup.sh
 Webapp is being deployed..
 
 #completed
-Webapp is running (WIP this check is always green)
+Webapp is running 
 ::
 
-
+If you prefer to manually checkout your app is up:
 ```sh
 kubectl get pods -l app=webapp -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'
 ```
@@ -86,7 +98,25 @@ kubectl create deployment --image=nginx nginx -n nginx
 ``` -->
 
 ## 2 Generate Traffic of benign behaviour
+
+<div style="background-color: #f0f8ff; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+
+**Benign** (*adjective*) [bi-ˈnīn] 
+*   **Benignity** (*noun*) [bi-ˈnig-nə-tē]
+*   **Benignly** (*adverb*) [bi-ˈnīn-lē]
+
+**Definitions/SYNONYMS:**
+
+1.  Of a mild type or character that does not threaten health or life. *HARMLESS*.
+2.  Of a gentle disposition: *GRACIOUS*.
+3.  Showing kindness and gentleness. *FAVORABLE*, *WHOLESOME*.
+</div>
+
+
 Optional: you could expose this app on port `58080` and use a new brower tab (see setup.sh)
+
+
+
 
 
 We assume that the full set of `benign behaviour` consists of the `webapp` performing a few pings interally to our `k0s` cluster. Thus, we simply make the app execute a few such pings via the `nodeport`, which is conviently exposed on our k0s-node, already:
