@@ -113,10 +113,6 @@ kubectl create deployment --image=nginx nginx -n nginx
 </div>
 
 
-Optional: you could expose this app on port `58080` and use a new brower tab (see setup.sh)
-
-
-
 
 
 We assume that the full set of `benign behaviour` consists of the `webapp` performing a few pings interally to our `k0s` cluster. Thus, we simply make the app execute a few such pings via the `nodeport`, which is conviently exposed on our k0s-node, already:
@@ -140,6 +136,10 @@ if that works, lets loop it for a bit.
 while true; do curl 172.16.0.2:$port/ping.php?ip=172.16.0.2; sleep 10; done
 ```
 
+__Optional__: you could expose this app on port `58080` and use a new brower tab (see setup.sh)
+```
+#sudo socat TCP-LISTEN:58080,bind=172.16.0.2,reuseaddr,fork TCP:127.0.0.1:58080&
+```
 
 <!-- 
 
