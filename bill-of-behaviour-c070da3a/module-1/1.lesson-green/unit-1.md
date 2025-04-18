@@ -136,57 +136,20 @@ if that works, lets loop it for a bit.
 while true; do curl 172.16.0.2:$port/ping.php?ip=172.16.0.2; sleep 10; done
 ```
 
+Please, switch back to the original :tab-locator-inline{text='k0s-01' name='k0s-01'} tab, and you are ✅
+::remark-box
+---
+kind: warning
+---
+
+
 __Optional__: you could expose this app on port `58080` and use a new brower tab (see setup.sh)
 ```
 #sudo socat TCP-LISTEN:58080,bind=172.16.0.2,reuseaddr,fork TCP:127.0.0.1:58080&
 ```
+::
 
 <!-- 
-
-
-After you did this a couuple of times, check that the profile has recorded this `benign behaviour`
-```sh
-kubectl describe applicationprofile pod-ping-app 
-```
-
-``` json
-spec:                                                                            
-  6   architectures:                                                                 
-  7   - amd64                                                                        
-  8   containers:                                                                    
-  9   - capabilities:                                                                
- 10     - NET_RAW                                                                    
- 11     - SETUID                                                                     
- 12     endpoints: null                                                              
- 13     execs:                                                                       
- 14     - args:                                                                      
- 15       - /bin/sh                                                                  
- 16       - -c                                                                       
- 17       - ping -c 4 172.16.0.2                                                     
- 18       path: /bin/sh                                                              
- 19     - args:                                                                      
- 20       - /bin/ping                                                                
- 21       - -c                                                                       
- 22       - "4"                                                                      
- 23       - 172.16.0.2                                                               
- 24       path: /bin/ping                                                            
- 25     imageID: docker.io/amitschendel/ping-app@sha256:99fe0f297bbaeca1896219486de8d777fa46bd5b0ca
-be8488de77405149c524d
- 26     imageTag: docker.io/amitschendel/ping-app:latest                             
- 27     name: ping-app                                                               
- 28     opens:                                                                       
- 29     - flags:                                                                     
- 30       - O_CLOEXEC                                                                
- 31       - O_RDONLY                                                                 
- 32       path: /usr/lib/x86_64-linux-gnu/libunistring.so.2.1.0                      
- 33     - flags:                                                                     
- 34       - O_RDONLY                                                                 
- 35       path: /var/www/html/ping.php 
-```
-
-
-We want to wait until the status is completed
-
 
 ::simple-task
 ---
@@ -200,22 +163,6 @@ Profile is still not complete
 Application profile is now complete
 ::
 
-
-```
-kubectl describe applicationprofile pod-ping-app 
-...
-...
-Annotations:  kubescape.io/completion: partial
-              kubescape.io/instance-id: apiVersion-v1/namespace-default/kind-Pod/name-ping-app
-              kubescape.io/resource-size: 9
-              kubescape.io/status: completed
-```
-
-Now, we must save this above file onto disk:
-
-```sh
-kubectl describe applicationprofile pod-ping-app 
-```
 
 
 <!-- [Debug: restart the nodeagent]
