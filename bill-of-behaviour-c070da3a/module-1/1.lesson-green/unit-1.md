@@ -130,12 +130,12 @@ now, test the ping:
 ```sh
 curl 172.16.0.2:$port/ping.php?ip=172.16.0.2
 ```
-if that works, lets loop it for a bit.
+if that works, let it loop 
 
 ```sh
 while true; do curl 172.16.0.2:$port/ping.php?ip=172.16.0.2; sleep 10; done
 ```
-
+Do not kill the looping.
 Please, switch back to the original :tab-locator-inline{text='k0s-01' name='k0s-01'} tab, and you are ✅
 ::remark-box
 ---
