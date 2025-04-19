@@ -40,7 +40,8 @@ tasks:
     needs:
     - git_clone
     run: |
-      [[ -z $(kubectl get pods -n honey -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}' | grep -v True) && "$(sleep 45 && kubectl get namespace honey -o jsonpath='{.status.phase}')"=="Active"  ]]
+      [[ $(kubectl wait --for=condition=Ready --all pods -n honey --timeout=600s && echo "true" || echo "false") == "true" ]]
+
 
   appprofempty:
     needs:

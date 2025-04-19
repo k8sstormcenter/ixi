@@ -17,10 +17,6 @@ __IRL__: the vendor needs to ensure that all application and network behaviour d
 are being triggered. Usually, this would be a combo between integration, load and behaviour-driven tests. Maybe UX test
 or traffic replay.
 
-We got the concrete question about Jupyter, and there C put a lot of thinking in 2021 around JupyterHub-deployments for several unis: mimicked what the students from different faculties would do: we essentially injected python exams and homeworks into the pods and executed them headlessly. Later did the same with fortran-hpc code and 3D-vizualization tools - headless in jupyterhub-> if you know at least the use-case (HPC vs student-homework in this case) and how your platform integrates with storage/shares -> you can trigger all syscalls. you can `not` trigger all network traffic. 
-ended up going the opposite way of explicitely monitoring for signatures of deviant behaviour, especially for the fileaccess. Here a more concrete threat-modelling and life-recording at the client was more useful, given the degree of heterogeneity.
-
-I think, a BoB can be useful as a starting point to detect if there are key-loggers or C2 embedded somewhere... Thats an interesting test... if someone wants to set it up
 ::
 
 
@@ -56,7 +52,7 @@ You can watch the pods becoming blue and select those items you d like to `watch
 
 ::image-box
 ---
-:src: __stаtic__/explorer.png
+:src: module-1/1.lesson-green/__stаtic__/explorer.png
 :alt: 'Watching pods in explorer tab'
 ---
 ::
