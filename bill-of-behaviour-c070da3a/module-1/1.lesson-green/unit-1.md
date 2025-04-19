@@ -7,7 +7,7 @@ name: simple-app-profile
 ---
 
 Pretending we are the supplier company of the software `webapp` , which is a single container php application,
-we will now create a simple BoB for our product.
+we will now create a simple BoB for this `webapp`- product.
 
 For this, we need to:  
  

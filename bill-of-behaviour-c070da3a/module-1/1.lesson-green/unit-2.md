@@ -34,7 +34,7 @@ execute the makefile to install it here on k0s:
 make bob
 ```
 
-While we re waiting, lets move over into the other tab :tab-locator-inline{text='Explorer' name='Explorer'} and watch whats happening on our cluster.
+While we re waiting, lets move over into the other tab :tab-locator-inline{text='Explorer' name='Explorer'} and watch what's happening on our k0s cluster.
 
 ::simple-task
 ---
@@ -45,14 +45,14 @@ While we re waiting, lets move over into the other tab :tab-locator-inline{text=
 Waiting for all pods to come up
 
 #completed
-Congrats! (WIP: this check is currently meaningless)
+Congrats! 
 ::
 
 You can watch the pods becoming blue and select those items you d like to `watch` with the `eye` icon.
 
 ::image-box
 ---
-:src: module-1/1.lesson-green/__stаtic__/explorer.png
+:src: module-1/1.lesson-green/__static__/explorer.png
 :alt: 'Watching pods in explorer tab'
 ---
 ::
@@ -80,6 +80,9 @@ So, you first wanna remember the exclusions that are set in the `rules`:
 kind: warning
 ---
 TODO: remove the ignoreMounts/Prefixes by default, havnt found how to do that elegantly
+```sh
+kubectl edit RuntimeRuleAlertBinding all-rules-all-pods
+```
 ::
 
 ```yaml
@@ -102,6 +105,7 @@ TODO: remove the ignoreMounts/Prefixes by default, havnt found how to do that el
           - lightening
   rules:
     - ruleName: Unexpected process launched
+  #REMOVE THIS BLOCK START
     - parameters:
         ignoreMounts: true
         ignorePrefixes:
@@ -109,6 +113,7 @@ TODO: remove the ignoreMounts/Prefixes by default, havnt found how to do that el
           - /run/secrets/kubernetes.io/serviceaccount
           - /var/run/secrets/kubernetes.io/serviceaccount
           - /tmp
+  #REMOVE THIS BLOCK END
 ```
 
 
@@ -135,12 +140,12 @@ nodeAgent:
     nodeProfileInterval: 1m # duration string
 ```
 
-At this point, we should not have any ApplicationProfiles.
+In the beginning, we should not have any ApplicationProfiles.
 
 ```sh
 kubectl get applicationprofile -A
 ```
-and likely, you ll see something like:
+after some time: likely, you ll see something like:
 ```json
 NAMESPACE   NAME         CREATED AT
 default     pod-webapp   2025-04-16T13:58:34Z

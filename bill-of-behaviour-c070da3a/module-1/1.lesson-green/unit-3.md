@@ -6,7 +6,7 @@ title: Create the Bill Of Behaviour - Hello Bob
 name: hello-bob
 ---
 
-Go back to the tab, where you had that ping-loop and kill it using `ctrl c`. 
+
 
 Lets check the profile that recorded this `benign behaviour`
 ```sh
@@ -100,6 +100,9 @@ kubectl logs -n honey -l app=node-agent -c node-agent | grep ended
 ```json
 {"level":"info","ts":"2025-04-16T12:06:57Z","msg":"stop monitor on container - monitoring time ended","container ID":"8ac882eefce545c63fdad8d090f7d6074389301c0474b9aed810f207fa62e924","k8s workload":"default/webapp/ping-app"}
 ```
+Go back to the :tab-locator-inline{text='Term 1' name='Term 1'}, where you had that ping-loop and kill it using `ctrl c`. 
+
+
 Also, in the crd annotation, you will find the status completed now. The completion is `partial`, which 
 we may ignore here (accrd to upstream documentation it means that the app was already started when we were profiling it, but this is what we want in this case)
 
@@ -134,9 +137,36 @@ eventually, a client will do almost the exact same thing, and pull it again, ...
 
 
 
-So, we are done here, but we could - just for kicks - verify that kubescape is now watching for anything that was not previously recorded as `benign` .
+So, just for the storyline: pretending we are the `customer` and in Module 2, we verified the signature, deployed the app. 
+We now verify that kubescape is now watching for anything that was not previously recorded as `benign` .
 
-### A malicious runtime behaviour by executing a simple injection like so:
+Again, we have two different usecases:
+1) Normal anomalies 
+   
+   A CVE is present in the app, or it gets exploited
+
+2) Supply Chain anomalies
+ 
+   The artefact is not the one from the vendor , OR the vendor s supply chain got compromised, OR its a typosquatting OR something else went wrong I.e. the behaviour
+   of the app has something additional in there , very often a beacon or something backdoor. Or just a cryptominer.
+
+   Now: some of these are easy to catch:
+    - cryptominers 
+    - modified utilities (like using a SETUID) 
+    - most sorts of exfiltration
+    - droppers and loaders
+
+for some, a SBOM is sufficient (if your chain of trust is tight). Still, the runtime behaviour could catch things in a 
+orthogonal way. Like two eyes see better than one. 
+
+   Some will be very hard to catch:
+    - A pod accessing service account tokens , even if the app has zero need for one -> this is very noisy
+    - the attack sleeping for very long between infection and exploitation -> it will look more like a normal attack if the correlation between the specific artefact having been deployed and the anomaly are temporarily separated . especially if its targeted (i.e. noone else sees the same thing)
+
+
+TODO: C wants to implement specifically an exfiltration usecase: where the app is not just doing a ping, but sending telemetry to the maintainers for debugging purposes. Can we estimate the increase in detection rates if we include known telemetry network endpoints into the BoB? (Task for C)
+
+### 1) Normal anomalies: A malicious runtime behaviour by executing a simple injection like so:
 
 in Tab 1 tail the logs again
 ```sh
@@ -174,9 +204,9 @@ In the other tab, you should now see several unexpected things:
 The fileaccess alert amongst the above messages is a definite smoking gun that a ping-utility wouldnt ever do.
 So, this is great for standard runtime anomly behaviour... But, this lab is mostly for supply chain, so lets test that
 
-### A malicious behaviour cause by the artefact having been tampered with:
+### 2) A malicious behaviour cause by the artefact having been tampered with in the supply chain:
 
-WIP: C is implementing the other modules, here is the short version, done on her laptop
+WIP: We will put something into the ping app , assuming the vendor didnt sign it, that has nothing to do with the ping
 
 
 
@@ -187,6 +217,8 @@ WIP: C is implementing the other modules, here is the short version, done on her
 
 OK: this is where I am at... Now implementing how to get this into an image, and read it out.
 And test, which parts of the following profile translate across clusters, and which dont
+
+The discussion is mostly in the wiki, if youd like to co-edit this lab -> reach out to C :)
 
 Heres the example:
 
