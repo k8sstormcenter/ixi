@@ -6,6 +6,134 @@ title: Building and Tagging the OCI artefact
 name: oci-build-tag
 ---
 
+Idea: WIP 
+
+* extract a json conformant with predicate format 
+* 
+
+dear co-autor P: is C correct in assuming you wanted to build this part?
+
+## 1) Predicate Format
+Sketch: - be'ware the stream of consciousness writing style
+
+```yaml
+Executables: Paths and arguments of executables that are expected to run.
+Network Connections: Expected network connections (IP addresses, DNS names, ports, protocols).
+File Access: Expected file access patterns (paths, read/write).
+System Calls: Expected system calls.
+Capabilities: Expected Linux capabilities.
+Image information: Image ID, Image Tag.
+```
+We need to do this for each `architecture`, as file and 
+```json
+{
+  "version": "1.0",
+  "image_id": "docker.io/amitschendel/ping-app@sha256:99fe0f297bbaeca1896219486de8d777fa46bd5b0cabe8488de77405149c524d",
+  "image_tag": "docker.io/amitschendel/ping-app:latest",
+  "architectures":  "amd64",
+  "executables": [
+    {
+      "path": "/bin/ping",
+      "args": ["-c", "4", "placeholder maybe CIDR regex"]
+    },
+    {
+      "path": "/bin/sh",
+      "args": ["-c", "ping placeholder"] TODO: test or dig through the code if a regex works here, else we need to remove the args, or ask vendors to remove such non-generic pieces themselves. Probably good to let vendors commit to as much as possible
+    }
+  ],
+  "file_access": [
+    {
+      "path": "/var/www/html/ping.php",
+      "flags": ["O_RDONLY"]
+    },
+    {
+      "path": "/lib/x86_64-linux-gnu/libc-2.31.so", TODO: think if there are cases when dynamic linking would be using something non-deterministic , thinking how podman or singularity could be doing things differently , are those relevant?
+      "flags": ["O_CLOEXEC", "O_RDONLY"]
+    }
+  ],
+  "system_calls": [
+    "accept4",
+    "access",
+    "arch_prctl",
+    "brk",
+    "capget",
+    "capset",
+    "chdir",
+    "clone",
+    "close"
+  ],
+  "capabilities": [
+    "NET_RAW",
+    "SETUID"
+  ],
+  "endpoints": [
+    {
+      "direction": "inbound",
+      "endpoint": ":<PORT>/ping.php",
+      "headers": {
+        "Host": "probably wont be generic"
+      },
+      "internal": false,
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "direction": "outbound",
+      "endpoint": "k8sstormcenter.com:443",
+      "protocol": "tcp",
+      "internal": false,
+      "methods": [
+        "LETS RECORD AN EXAMPLE"
+      ]
+    },
+    {
+      "direction": "outbound",
+      "endpoint": "k8sstormcenter.com",
+      "protocol": "udp",
+      "internal": false,
+      "methods": [
+        "DNS_QUERY"
+      ],
+      "dns": {
+        "query_type": "A",
+        "query_name": "k8sstormcenter.com",
+        "response": {
+          "answer": [
+            {
+              "name": "k8sstormcenter.com",
+              "type": "A",
+              "ttl": 300,
+              "data": "192.168.1.100" # DO WE WANT TO commit to the answer, or leave it as optional if a vendor is super sure they have static IPs. the DNS part could be very valuable in detecting malicious behaviour, probably good to have it as OPTIONAL
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+## 2) Building the artefact with the bob included
+
+
+Need to reclone, cause this is a new environment with docker/buildx , not k0s
+
+```git
+git clone https://github.com/k8sstormcenter/honeycluster.git
+cd honeycluster
+git checkout 152-implement-bill-of-behaviour-demo-lab 
+cd traces/kubescape-verify/attacks/webapp/
+```
+Sketch of commands
+
+```sh
+docker buildx create --use --name=buildkit-container --driver=docker-container
+docker buildx build --bob=true -t registry.iximiuz.com/webapp:latest --push .
+```
+
+
+<!-- 
 So, we have our `ApplicationProfile` from the last section;
 
 ```yaml
@@ -187,11 +315,7 @@ cd traces/kubescape-verify/attacks/webapp/
 
 ```sh
 docker buildx create --use --name=buildkit-container --driver=docker-container
-docker buildx build --sbom=true -t registry.iximiuz.com/test:latest --push .
+docker buildx build --bob=true -t registry.iximiuz.com/webapp:latest --push .
 ```
 
-<!-- ```
-sudo ctr image push --user iximiuzlabs:rules! registry.iximiuz.com/test:latest
-``` -->
-
-Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.
+ -->
