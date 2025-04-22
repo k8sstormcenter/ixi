@@ -8,10 +8,12 @@ name: hello-bob
 
 
 
-Lets check the profile that recorded this `benign behaviour`
+Lets look in more detail at the profile that recorded this `benign behaviour` , yours should be `different`
 ```sh
-kubectl describe applicationprofile pod-webapp 
+kubectl describe applicationprofile replicaset-$rs 
 ```
+
+The following one was recorded on a k0s (you are on a kind-cluster), so yours should be a lot longer (and I mean `a lot`)
 
 ``` yaml
 Spec:
@@ -103,23 +105,19 @@ kubectl logs -n honey -l app=node-agent -c node-agent | grep ended
 Go back to the :tab-locator-inline{text='Term 1' name='Term 1'}, where you had that ping-loop and kill it using `ctrl c`. 
 
 
-Also, in the crd annotation, you will find the status completed now. The completion is `partial`, which 
-we may ignore here (accrd to upstream documentation it means that the app was already started when we were profiling it, but this is what we want in this case)
+Also, in the crd annotation, you will find the status completed now. 
 
 ```yaml
-kubectl describe applicationprofile pod-webapp 
+kubectl describe applicationprofile replicaset-webapp-xxx
 ...
 ...
-Annotations:  kubescape.io/completion: partial
-              kubescape.io/instance-id: apiVersion-v1/namespace-default/kind-Pod/name-webapp
-              kubescape.io/resource-size: 9
-              kubescape.io/status: completed
+Annotations:   kubescape.io/status: completed
 ```
 
 Now, we must save this above file onto disk:
 
 ```sh
-kubectl get applicationprofile pod-webapp -o yaml > pod-webapp.yaml
+kubectl get applicationprofile replicaset-$rs -o yaml > pod-webapp.yaml
 ```
 
 

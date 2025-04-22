@@ -59,7 +59,7 @@ tasks:
   
   profilecomplete:
     run: |
-      [[ "$(kubectl get applicationprofile pod-webapp -o jsonpath='{.metadata.annotations.kubescape\.io/status}')" == "completed" ]]
+      [[ "$(kubectl get applicationprofile replicaset-$(kubectl get replicaset -n default -o jsonpath='{.items[0].metadata.name}') -o jsonpath='{.metadata.annotations.kubescape\.io/status}')" == "completed" ]]
 
 
 ---
