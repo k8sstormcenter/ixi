@@ -14,17 +14,20 @@ updatedAt: 2024-01-01
 cover: __static__/cover.png
 
 playground:
-  name: k0s
-  machines:
-  - name: k0s-01
-    resources:
-      cpuCount: 4
-      ramSize: "8Gi"
+  name: docker
 
-  tabs:
-  - machine: k0s-01
-  - kind: kexp
-    machine: k0s-01
+# playground:
+#   name: k0s
+#   machines:
+#   - name: k0s-01
+#     resources:
+#       cpuCount: 4
+#       ramSize: "8Gi"
+
+#   tabs:
+#   - machine: k0s-01
+#   - kind: kexp
+#     machine: k0s-01
   
 
 

@@ -22,8 +22,8 @@ or traffic replay.
 ::
 
 
-Let's install kubescape, it will help us use `eBPF/Inspector Gadget` in a hands-off manner via its nodeagent-component. So  we'll use a config that only installs the runtime-behaviour module produce an output that an end-user can directly consume, without having to deal with inspector gadget or ebpf or low-level stuff.
-
+We have installed kubescape, it will help us use `eBPF/Inspector Gadget` in a hands-off manner via its nodeagent-component. So  we'll use a config that only installs the runtime-behaviour module produce an output that an end-user can directly consume, without having to deal with inspector gadget or ebpf or low-level stuff.
+<!--
 TODO: current config incl other stuff, and I dunno why it wants to install clamAV/grype, it shouldn't need it for this exercise, but I havent found the right combo of settings...so currently, there are components being installed, that we dont need. 
 
 Assuming, you havnt deleted the previously cloned repo:
@@ -54,12 +54,12 @@ Congrats!
 
 You can watch the pods becoming blue and select those items you d like to `watch` with the `eye` icon.
 
-<!-- ::image-box
+ ::image-box
 ---
 :src: module-1/lesson-1/img/explorer.png
 :alt: 'This image is still not found - Known issue'
 ---
-:: -->
+:: 
 ::slide-show
 ---
 slides:
@@ -69,7 +69,7 @@ slides:
   alt: "test2 is it finding the png?"
 ---
 ::
-
+-->
 Well! Now, just to make sure, lets check that all kubescape pods are healthy, cause we need it to 
 generate our BoB
 
@@ -88,7 +88,7 @@ kubectl describe RuntimeRuleAlertBinding all-rules-all-pods
 
 
 So, you first wanna remember the exclusions that are set in the `rules`:
-::remark-box
+<!-- ::remark-box
 ---
 kind: warning
 ---
@@ -96,7 +96,7 @@ TODO: remove the ignoreMounts/Prefixes by default, havnt found how to do that el
 ```sh
 kubectl edit RuntimeRuleAlertBinding all-rules-all-pods
 ```
-::
+:: -->
 
 ```yaml
   namespaceSelector:
@@ -118,7 +118,7 @@ kubectl edit RuntimeRuleAlertBinding all-rules-all-pods
           - lightening
   rules:
     - ruleName: Unexpected process launched
-  #REMOVE THIS BLOCK START
+  #check that the following BLOCK is not in the file
     - parameters:
         ignoreMounts: true
         ignorePrefixes:
@@ -126,20 +126,20 @@ kubectl edit RuntimeRuleAlertBinding all-rules-all-pods
           - /run/secrets/kubernetes.io/serviceaccount
           - /var/run/secrets/kubernetes.io/serviceaccount
           - /tmp
-  #REMOVE THIS BLOCK END
+  # BLOCK THAT SHOULDNT BE THERE - END
 ```
 
 
 Couple of other important settings to be aware of that govern the anomaly detection and the
 learning duration. i.e. how long we have to generate a `benign behaviour` profile. 
-I chose to set these durations to be very small, as this is a demo. 
+<!-- I chose to set these durations to be very small, as this is a demo. 
 ::remark-box
 ---
 kind: warning
 ---
-TODO: figure out if the annotation in the webapp `kubescape.io/max-sniffing-time: "2m"` takes precendence
+TODO: figure out if the annotation in the webapp `kubescape.io/max-sniffing-time: "2m"` takes precendence. it seems to break on k0s
 and if it overrides the learningPeriod or the maxlearningPeriod or both. (the `"scanTimeout": "5m"` is related to grype and has nothing to do with the runtime stuff)
-::
+:: -->
 
 ```
 nodeAgent:
@@ -161,11 +161,13 @@ kubectl get applicationprofile -A
 after some time: likely, you ll see something like:
 ```json
 NAMESPACE   NAME         CREATED AT
-default     pod-webapp   2025-04-16T13:58:34Z
+default     replicaset-webapp-85974bd68f   2025-04-16T13:58:34Z
 ```
 Now, you may switch of the looping in the other tab and look at generated profile
+
 ```sh
-kubectl describe applicationprofile pod-webapp 
+export rs=$(kubectl get replicaset -n default -o jsonpath='{.items[0].metadata.name}')
+kubectl describe applicationprofile replicaset-$rs
 ```
 
 <!-- -- ::simple-task

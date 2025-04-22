@@ -23,13 +23,36 @@ Make sure, you have this lab open in chrome. Safari doesnt work.
 
 Please hover over the bottom right corner of the below box, when the `Copy` symbol appears, click it and `Paste` it into the right hand `terminal` (you need to activate the playground first). In Windows, you need to right click or configure what keybindings your browser is listening to.
 
-You now are running a slim flavour of `kubernetes` called k0s, in Module 3, we will run a different flavour, called k3s. This is to showcase, that a vendor and a consumer will likely use different infrastructure.
+
+
+You now are running a development environment of `kubernetes` called `kind`, in Module 3, we will run a different flavour, called `k3s`, which is a real kubernetes distribution. This is to showcase, that a vendor and a consumer will likely use different infrastructure. kind is often used in CICD, but it runs `kubernetes in docker` and the reason we re currently using it, is that I had to quickly switch.
+On the positive side, it ll allow us to argue if running this entire BoB-generation inside CI/CD is an option.
 To safe you the config, the following repo contains settings that  WIP: 🤣 __will__ work 😂 
 
+::remark-box
+---
+kind: warning
+---
+The reason this is not very clean right now, is that `k0s` turned out to have a triggering issue that I just couldn't find the root cause of. So while suboptimal, we ll use `kind` until further notice
+::
+
+
 ```git
+# For AMD64 / x86_64
+[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.27.0/kind-linux-amd64
+# For ARM64
+[ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.27.0/kind-linux-arm64
+chmod +x ./kind
+sudo mv ./kind /usr/local/bin/kind
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin/kubectl
 git clone https://github.com/k8sstormcenter/honeycluster.git
 cd honeycluster
 git checkout 152-implement-bill-of-behaviour-demo-lab 
+make cluster-up
+make kubescape-bob-kind
 ```
 ::simple-task
 ---
@@ -44,17 +67,34 @@ Waiting for you to clone the repo
 Congrats! 
 ::
 
+<!--
 ::remark-box
 ---
 kind: warning
 ---
-Sequence: repeat the profiling , with kubescape already deployed to assure the container startup is captured --
-hmmm doesnt seem to make a difference. Need to repeat this on kind and gke to check -- I m not believing the current profile to be correct
+
+__There are issues that are related to k0s arch... must switch the lab to a different flavour:__
+
+Sequence: kubescape doesnt trigger on the app deployment... I m not believing the current profile to be correct (ie it is incomplete) for k0s ... I suspect its an event in etcd that is k0s simply doesnt have
 ```sh
 make bob
 ```
-...wait for all 4 pods to be there esp nodeagent
+ debug...wait for all 4 pods to be there esp nodeagent
+```sh
+kubectl logs -n honey node-agent-xxxtab completexxx
+```
+ kubescape nodeagent needs to be restarted after it has found the storage, but  there is some other race-condition , or at least its not eventually consistent. If the storage is not ready at the first startup, then nodeagent ignores all apps and doesnt produce anything.
+ So, currently, there are unknown conditions that must be true before it all works.
+ Empirically, after the storage is there, restart the deployment making sure the config is read
+
+TODO: switch to a different type of k8s for this lab, unless you find the issue. The current k0s profiles always miss the startup but record the kill. I ve not found why
+
+```sh
+kubectl apply -f ~/honeycluster/honeystack/kubescape/kscloudconfig.yaml
+kubectl rollout restart -n honey ds node-agent
+```  
 ::
+-->
 
 
 ## 1 Deploy
@@ -133,19 +173,21 @@ We assume that the full set of `benign behaviour` consists of the `webapp` perfo
 Open a new tab :tab-locator-inline{text='another terminal' :new=true}
 
 First, find the nodeport IP
-```sh
+<!-- ```sh
 export port=$(kubectl describe svc/webapp | grep NodePort | awk '{print $3}' | cut -d '/' -f1)
 echo "NodePort is: $port"
-```
+ curl 172.16.0.2:$port/ping.php?ip=172.16.0.2
+while true; do curl 172.16.0.2:$port/ping.php?ip=172.16.0.2; sleep 10; done
+``` -->
 now, test the ping:
 
 ```sh
-curl 172.16.0.2:$port/ping.php?ip=172.16.0.2
+curl localhost:8080/ping.php?ip=172.16.0.2
 ```
 if that works, let it loop 
 
 ```sh
-while true; do curl 172.16.0.2:$port/ping.php?ip=172.16.0.2; sleep 10; done
+while true; do curl localhost:8080/ping.php?ip=172.16.0.2; sleep 10; done
 ```
 Do not kill the looping.
 Please, switch back to the original :tab-locator-inline{text='k0s-01' name='k0s-01'} tab, and you are ✅
