@@ -119,7 +119,7 @@ Annotations:  kubescape.io/completion: partial
 Now, we must save this above file onto disk:
 
 ```sh
-kubectl describe applicationprofile pod-webapp  > pod-webapp.yaml
+kubectl get applicationprofile pod-webapp -o yaml > pod-webapp.yaml
 ```
 
 
