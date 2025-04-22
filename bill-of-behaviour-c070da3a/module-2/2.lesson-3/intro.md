@@ -1,13 +1,13 @@
 ---
 kind: unit
 
-title: Welcome to Kubernetes unit
+title: Client Side verification of BoB
 
-name: kubernetes-intro
+name: oci-verify-bob
 slug: 1
 ---
 
-Welcome to the Kubernetes playground! Run:
+Welcome back to kubernetes. Now, we are switching sides and becoming a `customer` who uses the `webapp` product.
 
 ```sh
 kubectl version

@@ -15,16 +15,7 @@ cover: __static__/cover.png
 
 playground:
   name: k3s
-  machines:
-  - name: k3s-01
-    resources:
-      cpuCount: 4
-      ramSize: "8Gi"
 
-  tabs:
-  - machine: k3s-01
-  - kind: kexp
-    machine: k3s-01
   
 
 

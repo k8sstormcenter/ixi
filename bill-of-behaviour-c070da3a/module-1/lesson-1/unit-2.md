@@ -9,6 +9,8 @@ name: honeycluster-up
 Now, we are still the vendor have the `webapp` deployed on our k0s cluster. 
 We are producing `benign` traffic that triggers all known behaviour of our `webapp`
 
+Viktor made a video of this feature, so if you dont know kubescape, consider watching https://www.youtube.com/watch?v=xilNX_mh6vE 
+
 ::remark-box
 ---
 kind: warning
@@ -20,7 +22,9 @@ or traffic replay.
 ::
 
 
-Let's install kubescape, it will help us use `Inspector Gadget` in a hands-off manner and produce an output, we can direclty consume:
+Let's install kubescape, it will help us use `eBPF/Inspector Gadget` in a hands-off manner via its nodeagent-component. So  we'll use a config that only installs the runtime-behaviour module produce an output that an end-user can directly consume, without having to deal with inspector gadget or ebpf or low-level stuff.
+
+TODO: current config incl other stuff, and I dunno why it wants to install clamAV/grype, it shouldn't need it for this exercise, but I havent found the right combo of settings...so currently, there are components being installed, that we dont need. 
 
 Assuming, you havnt deleted the previously cloned repo:
 
@@ -50,14 +54,23 @@ Congrats!
 
 You can watch the pods becoming blue and select those items you d like to `watch` with the `eye` icon.
 
-::image-box
+<!-- ::image-box
 ---
-:src: module-1/1.lesson-green/__static__/explorer.png
-:alt: 'Watching pods in explorer tab'
+:src: module-1/lesson-1/img/explorer.png
+:alt: 'This image is still not found - Known issue'
+---
+:: -->
+::slide-show
+---
+slides:
+- image: __static__/explorer.png
+  alt: "test1 - working on getting paths to CDN right..."
+- image: __static__/cover.png
+  alt: "test2 is it finding the png?"
 ---
 ::
 
-Nice! Now, just to make sure, lets check that all kubescape pods are healthy, cause we need it to 
+Well! Now, just to make sure, lets check that all kubescape pods are healthy, cause we need it to 
 generate our BoB
 
 
@@ -125,7 +138,7 @@ I chose to set these durations to be very small, as this is a demo.
 kind: warning
 ---
 TODO: figure out if the annotation in the webapp `kubescape.io/max-sniffing-time: "2m"` takes precendence
-and if it overrides the learningPeriod or the maxlearningPeriod or both.
+and if it overrides the learningPeriod or the maxlearningPeriod or both. (the `"scanTimeout": "5m"` is related to grype and has nothing to do with the runtime stuff)
 ::
 
 ```

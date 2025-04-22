@@ -40,6 +40,7 @@ tasks:
     needs:
     - git_clone
     run: |
+      [[ $(kubectl get pods -n honey --no-headers 2>/dev/null | wc -l) -gt 0 ]] && \
       [[ $(kubectl wait --for=condition=Ready --all pods -n honey --timeout=600s && echo "true" || echo "false") == "true" ]]
 
 

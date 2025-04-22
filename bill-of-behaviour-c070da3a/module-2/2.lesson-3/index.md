@@ -13,5 +13,5 @@ updatedAt: 2024-01-01
 cover: __static__/cover.png
 
 playground:
-  name: k0s
+  name: k3s
 ---

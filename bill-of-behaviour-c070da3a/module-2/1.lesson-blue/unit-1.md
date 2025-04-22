@@ -8,23 +8,31 @@ name: oci-build-tag
 
 Idea: WIP 
 
-* extract a json conformant with predicate format 
-* 
+* extract a json conformant with predicate format from the ebpf-recording 
+* if this is a Container: pretend use docker `--bob=true` build ...
+* if this is another type of artefact like helm: have a means to append the predicate
+
+No well-established API should change, else people are not going to use it.
 
 dear co-autor P: is C correct in assuming you wanted to build this part?
 
 ## 1) Predicate Format
 Sketch: - be'ware the stream of consciousness writing style
 
+
+Highlevel:
 ```yaml
 Executables: Paths and arguments of executables that are expected to run.
 Network Connections: Expected network connections (IP addresses, DNS names, ports, protocols).
-File Access: Expected file access patterns (paths, read/write).
+File Access: Expected file access patterns (paths, read/write). 
 System Calls: Expected system calls.
-Capabilities: Expected Linux capabilities.
+Capabilities: Expected Linux capabilities. #TBC differs accross containerruntimes -> TODO recapture the profile, check the image sha
 Image information: Image ID, Image Tag.
 ```
-We need to do this for each `architecture`, as file and 
+
+Detailed concrete example: 
+
+TODO: This must be produced this for each `architecture`,  file_access directly depends on `arch`, but depending how exotic the `arch` more may be different. `execs` depend on the flavour kubernetes
 ```json
 {
   "version": "1.0",

@@ -1,22 +1,25 @@
 ---
 kind: unit
 
-title: Setup the app
+title: Consume the app on client cluster
 
-name: simple-app-profile
+name: consume-app-install
 ---
 
-Pretending we are the supplier company of the software `webapp` , which is a single container php application,
-we will now create a simple BoB for our product.
+Pretending we are now the consumer/user of `webapp` , we have our own infrastructure.
+This consumer uses k3s, which is another slim kubernetes flavour from a different vendor than k0s.
 
-For this, we need to:  (TODO: make this tableofcontnets)
+We, ll cover the following
  
-* 1 deploy it
-* 2 execute/trigger all known behaviour (by e.g. using a load test or more old-fashioned cypress tests)
-* 3 profile the benign behaviour
-* 4 export the profile
+* Get to know our k3s installation
+* Deploy kubescape in a slightly different config to give us anomaly detection
+* Pull down the artefact `webapp` and deploy it
+* Verify some things
+* Watch it for the two types of anomalies
+  
 
 ## 0 Clone repo
+Again, lets clone the same repo, this is a fresh playground
 ```git
 git clone https://github.com/k8sstormcenter/honeycluster.git
 cd honeycluster
@@ -35,79 +38,34 @@ Waiting for you to clone the repo
 Congrats! 
 ::
 
-## 1 Deploy
-Using one of the `kubescape-demo`** apps, we deploy a ping utility called `webapp` that has
-
-a) desired functionality: it pings things  
-
-b) undesired funtionality: it is vulnerable to injection
+## 1 setup kubescape
 
 ```sh
-cd traces/kubescape-verify/attacks/webapp/
+make kubescape
+```
+
+
+## 2 pull down artefact
+
+
+## 3 deploy artefact
+
+WIP: currently testing the tampered artefact deployment automation
+
+Hang on: step 1 is deploying the application profile -> add this TODO
+```sh
+cd traces/kubescape-verify/attacks/webapp_t/
 chmod +x setup.sh
 ./setup.sh
 ```
 
 
 
-::simple-task
----
-:tasks: tasks
-:name: webapp
----
-#active
-Webapp is being deployed..
-
-#completed
-Webapp is running (WIP this check is always green)
-::
-
+the looping as before, but this time the signature should be different
 
 ```sh
-kubectl get pods -l app=ping-app -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'
-```
-
-If you get `True`, proceed:
-
-
-**: credit belongs entirely to the original authors
-
-<!-- ```sh
-kubectl logs -n honey -l app=node-agent -f -c node-agent
-```
-or debug:
-```sh
-kubectl logs -n honey node-agent-<TAB COMPLETE>
-```
-
-```
-kubectl create ns nginx
-kubectl create deployment --image=nginx nginx -n nginx
-``` -->
-
-## 2 Generate Traffic of benign behaviour
-Optional: you could expose this app on port `58080` and use a new brower tab (see setup.sh)
-
-
-We assume that the full set of `benign behaviour` consists of the `webapp` performing a few pings interally to our `k0s` cluster. Thus, we simply make the app execute a few such pings via the `nodeport`, which is conviently exposed on our k0s-node, already:
-
-
-First find the nodeport IP
-```sh
-kubectl describe svc/ping-app |grep NodePort
-```
-
-now, export this port to the local shell
-```sh
-export port=<NodePort>
-```
-
-```sh
-curl 172.16.0.2:$port/ping.php?ip=172.16.0.2
-```
-if that works, lets loop it for a bit.
-Open a new tab :tab-locator-inline{text='another terminal' :new=true}
-```sh
+export port=$(kubectl describe svc/webapp | grep NodePort | awk '{print $3}' | cut -d '/' -f1)
+echo "NodePort is: $port"
 while true; do curl 172.16.0.2:$port/ping.php?ip=172.16.0.2; sleep 10; done
 ```
-
+## 4 apply the 

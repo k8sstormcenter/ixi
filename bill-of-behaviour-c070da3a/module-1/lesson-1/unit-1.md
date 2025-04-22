@@ -24,7 +24,7 @@ Make sure, you have this lab open in chrome. Safari doesnt work.
 Please hover over the bottom right corner of the below box, when the `Copy` symbol appears, click it and `Paste` it into the right hand `terminal` (you need to activate the playground first). In Windows, you need to right click or configure what keybindings your browser is listening to.
 
 You now are running a slim flavour of `kubernetes` called k0s, in Module 3, we will run a different flavour, called k3s. This is to showcase, that a vendor and a consumer will likely use different infrastructure.
-To safe you the config, the following repo contains settings that work [WIP: 🤣 will work 😂 ]
+To safe you the config, the following repo contains settings that  WIP: 🤣 __will__ work 😂 
 
 ```git
 git clone https://github.com/k8sstormcenter/honeycluster.git
@@ -42,6 +42,18 @@ Waiting for you to clone the repo
 
 #completed
 Congrats! 
+::
+
+::remark-box
+---
+kind: warning
+---
+Sequence: repeat the profiling , with kubescape already deployed to assure the container startup is captured --
+hmmm doesnt seem to make a difference. Need to repeat this on kind and gke to check -- I m not believing the current profile to be correct
+```sh
+make bob
+```
+...wait for all 4 pods to be there esp nodeagent
 ::
 
 
