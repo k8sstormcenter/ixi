@@ -170,7 +170,64 @@ export rs=$(kubectl get replicaset -n default -o jsonpath='{.items[0].metadata.n
 kubectl describe applicationprofile replicaset-$rs
 ```
 
-<!-- -- ::simple-task
+We want to wait until the status is completed
+
+
+::simple-task
+---
+:tasks: tasks
+:name:  profilecomplete
+---
+#active
+Profile is still not complete
+
+#completed
+Application profile is now complete
+::
+
+If the above indicator is `green`, this means that the following event has been reached by kubescape:
+
+```sh
+kubectl logs -n honey -l app=node-agent -c node-agent | grep ended
+```
+
+
+```json
+{"level":"info","ts":"2025-04-16T12:06:57Z","msg":"stop monitor on container - monitoring time ended","container ID":"8ac882eefce545c63fdad8d090f7d6074389301c0474b9aed810f207fa62e924","k8s workload":"default/webapp/ping-app"}
+```
+
+
+We want to wait until the status is completed
+
+
+Also, in the crd annotation, you will find the status completed now. 
+
+```yaml
+kubectl describe applicationprofile replicaset-webapp-xxx
+...
+...
+Annotations:   kubescape.io/status: completed
+```
+
+Now, we must save this above file onto disk:
+
+```sh
+kubectl get applicationprofile replicaset-$rs -o yaml > app-profile-webapp.yaml
+```
+<!-- 
+## Comparison to recording the profile when the app is already running
+
+Just, because I found it rather insightful, let's do one more thing.
+
+First, check the looping ping is still going on in the other tab, then come back here.
+
+Let's delete the app
+
+
+Go back to the :tab-locator-inline{text='Term 1' name='Term 1'}, where you had that ping-loop and kill it using `ctrl c`. 
+
+
+-- ::simple-task
 ---
 :tasks: tasks
 :name: appprofempty

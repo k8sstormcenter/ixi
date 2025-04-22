@@ -10,8 +10,9 @@ name: hello-bob
 
 Lets look in more detail at the profile that recorded this `benign behaviour` , yours should be `different`
 ```sh
-kubectl describe applicationprofile replicaset-$rs 
+cat app-profile-webapp.yaml 
 ```
+
 
 The following one was recorded on a k0s (you are on a kind-cluster), so yours should be a lot longer (and I mean `a lot`)
 
@@ -78,31 +79,7 @@ Spec:
 ```
 
 
-We want to wait until the status is completed
-
-
-::simple-task
----
-:tasks: tasks
-:name:  profilecomplete
----
-#active
-Profile is still not complete
-
-#completed
-Application profile is now complete
-::
-
-If the above indicator is `green`, this means that the following event has been reached by kubescape:
-
-```sh
-kubectl logs -n honey -l app=node-agent -c node-agent | grep ended
-```
-
-```json
-{"level":"info","ts":"2025-04-16T12:06:57Z","msg":"stop monitor on container - monitoring time ended","container ID":"8ac882eefce545c63fdad8d090f7d6074389301c0474b9aed810f207fa62e924","k8s workload":"default/webapp/ping-app"}
-```
-Go back to the :tab-locator-inline{text='Term 1' name='Term 1'}, where you had that ping-loop and kill it using `ctrl c`. 
+<!-- We want to wait until the status is completed
 
 
 Also, in the crd annotation, you will find the status completed now. 
@@ -118,7 +95,7 @@ Now, we must save this above file onto disk:
 
 ```sh
 kubectl get applicationprofile replicaset-$rs -o yaml > pod-webapp.yaml
-```
+``` -->
 
 
 <!-- [Debug: restart the nodeagent]
