@@ -46,6 +46,21 @@ git checkout 152-implement-bill-of-behaviour-demo-lab
 make storage kubescape-bob-kind
 ```
 
+```bash
+kubectl get pods -n honey -l app.kubernetes.io/instance=kubescape
+```
+You want the `STATUS` of all pods to be `Running`, like so:
+```
+laborant@dev-machine:~/honeycluster$ kubectl get pods -n honey -l app.kubernetes.io/instance=kubescape
+NAME                         READY   STATUS    RESTARTS   AGE
+kubescape-6685556665-5p6sh   1/1     Running   0          21m
+kubevuln-5645447f88-6dc65    1/1     Running   0          21m
+node-agent-5n6fr             1/1     Running   0          4m50s
+node-agent-5wxzs             1/1     Running   0          4m56s
+node-agent-w4c2g             1/1     Running   0          5m41s
+operator-5dddf6f84-8nlpl     1/1     Running   0          21m
+storage-54597f8454-nlgfh     1/1     Running   0          21m
+```
 <!-- 
 ```git
 # For AMD64 / x86_64

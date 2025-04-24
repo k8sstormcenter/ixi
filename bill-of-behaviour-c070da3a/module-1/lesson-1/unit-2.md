@@ -49,10 +49,10 @@ Waiting for all pods to come up
 
 #completed
 Congrats! 
-:: -->
+:: 
 
 You can watch the pods becoming blue and select those items you d like to `watch` with the `eye` icon.
-
+-->
  <!-- ::image-box
 ---
 :src: module-1/lesson-1/img/explorer.png
@@ -69,7 +69,7 @@ slides:
 ---
 ::
 --> 
-Once all kubescape pods are healthy, we can move on and generate our BoB
+If all kubescape pods are healthy, we can move on and inspect our `ApplicationProfile`, that will serve as base for our BoB. (if any of the pods are unhealthy, the `ApplicationProfile` is likely incomplete and you should not use it)
 
 ```bash
 kubectl get pods -n honey -l app.kubernetes.io/instance=kubescape
@@ -124,6 +124,7 @@ kubectl edit RuntimeRuleAlertBinding all-rules-all-pods
           - honey
           - storm
           - lightening
+          - kube-flannel
   rules:
     - ruleName: Unexpected process launched
   #check that the following BLOCK is not in the file
@@ -160,6 +161,15 @@ nodeAgent:
     updatePeriod: 1m # duration string
     nodeProfileInterval: 1m # duration string
 ```
+
+in order to display this, you `can` open `k9s` by typing that in your terminal.
+Then, using `vim` syntax (the one and only), inside the k9s dialogue
+```bash
+k9s
+:helm
+```
+select `kubescape-operator` using the arrow-keys and press `v` for seeing the values of the `helm chart`.
+
 
 ```
  Context: kubernetes-admin@kubernetes 🖍            <c> … ____  __ ________          │  │        │        │ │                 │
@@ -212,7 +222,7 @@ kubectl describe applicationprofile replicaset-$rs
 We want to wait until the status is completed
 
 
-::simple-task
+<!-- ::simple-task
 ---
 :tasks: tasks
 :name:  profilecomplete
@@ -222,7 +232,7 @@ Profile is still not complete
 
 #completed
 Application profile is now complete
-::
+:: -->
 
 If the above indicator is `green`, this means that the following event has been reached by kubescape:
 

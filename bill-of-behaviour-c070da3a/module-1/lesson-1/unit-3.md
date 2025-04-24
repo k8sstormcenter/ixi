@@ -14,7 +14,7 @@ cat app-profile-webapp.yaml
 ```
 
 
-The following one was recorded on a k0s (you are on a kind-cluster), so yours should be a lot longer (and I mean `a lot`)
+The following one was recorded on a k0s (you are on a different cluster), so yours should be a lot longer (and I mean `a lot`)
 
 ``` yaml
 Spec:
@@ -79,40 +79,17 @@ Spec:
 ```
 
 
-<!-- We want to wait until the status is completed
 
 
-Also, in the crd annotation, you will find the status completed now. 
-
-```yaml
-kubectl describe applicationprofile replicaset-webapp-xxx
-...
-...
-Annotations:   kubescape.io/status: completed
-```
-
-Now, we must save this above file onto disk:
-
-```sh
-kubectl get applicationprofile replicaset-$rs -o yaml > pod-webapp.yaml
-``` -->
-
-
-<!-- [Debug: restart the nodeagent]
-
-```sh
-kubectl rollout restart ds -n honey node-agent 
-``` -->
-
-## Test (this will be moved into the client side)
+## CUSTOMER SIDE SKETCH  (this will be moved into the Module 3)
 
 @EarlyReviewers: now i need to implement the extract this profile into yaml, attach it to container, sign, push, ....lalala
 eventually, a client will do almost the exact same thing, and pull it again, ... this is the sketch of the `alert` of
-`malicious` behaviour.
+`malicious` behaviour of either `runtime exploit of CVE` (aka normal anomaly) or `supply chain tampering` (aka supply chain anomaly)
 
 
 
-So, just for the storyline: pretending we are the `customer` and in Module 2, we verified the signature, deployed the app. 
+So, just for the storyline: pretending we are now the `customer` and in Module 2, we verified the signature, deployed the app. 
 We now verify that kubescape is now watching for anything that was not previously recorded as `benign` .
 
 Again, we have two different usecases:
