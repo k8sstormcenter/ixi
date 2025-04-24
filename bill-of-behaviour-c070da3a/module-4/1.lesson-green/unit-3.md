@@ -82,7 +82,7 @@ We want to wait until the status is completed
 ::simple-task
 ---
 :tasks: tasks
-:name:  profilecomplete
+:name:  profilecomplete_1
 ---
 #active
 Profile is still not complete

@@ -6,7 +6,7 @@ title: Profiling with Kubescape
 name: honeycluster-up
 ---
 
-Now, we are still the vendor have the `webapp` deployed on our k0s cluster. 
+Now, we are still the vendor have the `webapp` deployed on our cluster. 
 We are producing `benign` traffic that triggers all known behaviour of our `webapp`
 
 Viktor made a video of this feature, so if you dont know kubescape, consider watching https://www.youtube.com/watch?v=xilNX_mh6vE 
@@ -23,20 +23,7 @@ or traffic replay.
 
 
 We have installed kubescape, it will help us use `eBPF/Inspector Gadget` in a hands-off manner via its nodeagent-component. So  we'll use a config that only installs the runtime-behaviour module produce an output that an end-user can directly consume, without having to deal with inspector gadget or ebpf or low-level stuff.
-<!--
-TODO: current config incl other stuff, and I dunno why it wants to install clamAV/grype, it shouldn't need it for this exercise, but I havent found the right combo of settings...so currently, there are components being installed, that we dont need. 
 
-Assuming, you havnt deleted the previously cloned repo:
-
-```
-cd
-cd honeycluster
-```
-execute the makefile to install it here on k0s:
-
-```sh
-make bob
-```
 
 While we re waiting, lets move over into the other tab :tab-locator-inline{text='Explorer' name='Explorer'} and watch what's happening on our k0s cluster.
 

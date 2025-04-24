@@ -31,28 +31,28 @@ playground:
 
 tasks:
 
-  git_clone:
+  git_clone_1:
     run: |
       [[  -d /home/laborant/honeycluster/.git   ]]
 
 
-  make:
+  make_1:
     needs:
-    - git_clone
+    - git_clone_1
     run: |
       [[ -z $(kubectl get pods -n honey -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}' | grep -v True) && "$(sleep 45 && kubectl get namespace honey -o jsonpath='{.status.phase}')"=="Active"  ]]
 
-  appprofempty:
+  appprofempty_1:
     needs:
-    - make
+    - make_1
     run: |
       [[ -z "$(kubectl get applicationprofile -A | tail -n +2)" ]]
 
-  webapp:
+  webapp_1:
     run: |
       [[ "$(kubectl get pods -l app=webapp -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}')" == "True"  ]]
   
-  profilecomplete:
+  profilecomplete_1:
     run: |
       [[ "$(kubectl get applicationprofile pod-ping-app -o jsonpath='{.metadata.annotations.kubescape\.io/status}')" == "completed" ]]
 

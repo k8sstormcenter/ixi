@@ -39,6 +39,14 @@ The reason this is not very clean right now, is that `k0s` turned out to have a 
 ::
 
 
+```bash
+git clone https://github.com/k8sstormcenter/honeycluster.git
+cd honeycluster
+git checkout 152-implement-bill-of-behaviour-demo-lab 
+make kubescape-bob-kind
+```
+
+<!-- 
 ```git
 # For AMD64 / x86_64
 [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.27.0/kind-linux-amd64
@@ -55,7 +63,11 @@ cd honeycluster
 git checkout 152-implement-bill-of-behaviour-demo-lab 
 make cluster-up
 make kubescape-bob-kind
-```
+``` -->
+
+<!-- 
+
+
 ::simple-task
 ---
 :tasks: tasks
@@ -63,41 +75,10 @@ make kubescape-bob-kind
 ---
 #active
 Waiting for you to clone the repo
-
-
 #completed
 Congrats! 
 ::
-
-<!--
-::remark-box
----
-kind: warning
----
-
-__There are issues that are related to k0s arch... must switch the lab to a different flavour:__
-
-Sequence: kubescape doesnt trigger on the app deployment... I m not believing the current profile to be correct (ie it is incomplete) for k0s ... I suspect its an event in etcd that is k0s simply doesnt have
-```sh
-make bob
-```
- debug...wait for all 4 pods to be there esp nodeagent
-```sh
-kubectl logs -n honey node-agent-xxxtab completexxx
-```
- kubescape nodeagent needs to be restarted after it has found the storage, but  there is some other race-condition , or at least its not eventually consistent. If the storage is not ready at the first startup, then nodeagent ignores all apps and doesnt produce anything.
- So, currently, there are unknown conditions that must be true before it all works.
- Empirically, after the storage is there, restart the deployment making sure the config is read
-
-TODO: switch to a different type of k8s for this lab, unless you find the issue. The current k0s profiles always miss the startup but record the kill. I ve not found why
-
-```sh
-kubectl apply -f ~/honeycluster/honeystack/kubescape/kscloudconfig.yaml
-kubectl rollout restart -n honey ds node-agent
-```  
-::
--->
-
+ -->
 
 ## 1 Deploy
 Using one of the `kubescape-demo`** apps, we deploy a ping utility called `webapp` that has
@@ -115,7 +96,7 @@ chmod +x setup.sh
 ```
 
 
-
+<!-- 
 ::simple-task
 ---
 :tasks: tasks
@@ -127,7 +108,7 @@ Webapp is being deployed..
 #completed
 Webapp is running 
 ::
-
+ -->
 If you prefer to manually checkout your app is up:
 ```sh
 kubectl get pods -l app=webapp -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'
@@ -138,18 +119,6 @@ If you get `True`, proceed:
 
 **: credit belongs entirely to the original authors
 
-<!-- ```sh
-kubectl logs -n honey -l app=node-agent -f -c node-agent
-```
-or debug:
-```sh
-kubectl logs -n honey node-agent-<TAB COMPLETE>
-```
-
-```
-kubectl create ns nginx
-kubectl create deployment --image=nginx nginx -n nginx
-``` -->
 
 ## 2 Generate Traffic of benign behaviour
 
@@ -172,16 +141,16 @@ kubectl create deployment --image=nginx nginx -n nginx
 We assume that the full set of `benign behaviour` consists of the `webapp` performing a few pings interally to our `k0s` cluster. Thus, we simply make the app execute a few such pings via the `nodeport`, which is conviently exposed on our k0s-node, already:
 
 
-Open a new tab :tab-locator-inline{text='another terminal' :new=true}
-
+Open a new tab :tab-locator-inline{text='new terminal' machine='dev-machine' :new=true}
+<!--
 First, find the nodeport IP
-<!-- ```sh
+ ```sh
 export port=$(kubectl describe svc/webapp | grep NodePort | awk '{print $3}' | cut -d '/' -f1)
 echo "NodePort is: $port"
  curl 172.16.0.2:$port/ping.php?ip=172.16.0.2
 while true; do curl 172.16.0.2:$port/ping.php?ip=172.16.0.2; sleep 10; done
 ``` -->
-now, test the ping:
+Lets test the ping:
 
 ```sh
 curl localhost:8080/ping.php?ip=172.16.0.2
@@ -192,7 +161,7 @@ if that works, let it loop
 while true; do curl localhost:8080/ping.php?ip=172.16.0.2; sleep 10; done
 ```
 Do not kill the looping.
-Please, switch back to the original :tab-locator-inline{text='k0s-01' name='k0s-01'} tab, and you are ✅
+Please, switch back to the original :tab-locator-inline{text='dev-machine' name='dev-machine'} tab, and you are ✅
 ::remark-box
 ---
 kind: warning

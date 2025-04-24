@@ -17,6 +17,10 @@ For this, we need to:
 * Export the profile
 
 ## 0 Clone repo
+Make sure, you have this lab open in chrome. Safari doesnt work. 
+
+Please hover over the bottom right corner of the below box, when the `Copy` symbol appears, click it and `Paste` it into the right hand `terminal` (you need to activate the playground first). In Windows, you need to right click or configure what keybindings your browser is listening to.
+
 ```git
 git clone https://github.com/k8sstormcenter/honeycluster.git
 cd honeycluster
@@ -25,7 +29,7 @@ git checkout 152-implement-bill-of-behaviour-demo-lab
 ::simple-task
 ---
 :tasks: tasks
-:name: git_clone
+:name: git_clone_1
 ---
 #active
 Waiting for you to clone the repo
@@ -58,7 +62,7 @@ chmod +x setup.sh
 ::simple-task
 ---
 :tasks: tasks
-:name: webapp
+:name: webapp_1
 ---
 #active
 Webapp is being deployed..
