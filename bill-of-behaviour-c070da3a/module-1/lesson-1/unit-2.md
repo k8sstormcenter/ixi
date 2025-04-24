@@ -161,6 +161,37 @@ nodeAgent:
     nodeProfileInterval: 1m # duration string
 ```
 
+```
+ Context: kubernetes-admin@kubernetes 🖍            <c> … ____  __ ________          │  │        │        │ │                 │
+  Cluster: kubernetes                               <e>  |    |/  /   __   \______ \ │  │        │        │ │                 │ 
+  User:    kubernetes-admin                         <n>  |       /\____    /  ___/ ─ │  │        │        │ │                 │ 
+  K9s Rev: v0.50.3 ⚡️ v0.50.4                        <shif|    \   \  /    /\___  \ ┐ │  │        │        │ │                 │ 
+  K8s Rev: v1.32.4                                  <v>  |____|\__ \/____//____  / │ │  │        │        │ │                 │ 
+  CPU:     n/a                                      <r>           \/           \/    │  │        │        │ │                 │ 
+  MEM:     n/a                                                                     │ │  │        │        │ │                 │
+  ┌─────────────────────────── Values(honey/kubescape) ────────────────────────────┐│ │  │        │        │ │                 │
+  │ alertCRD:                                                                      ││ │  │        │        │ │                 │
+  │   installDefault: true                                                         ││ │  │        │        │─│─────────────────┘
+  │   scopeClustered: true                                                         ││ │  │        │        │ ┘                  
+  │ capabilities:                                                                  ││ │  │      ──│────────┘                    
+  │   runtimeDetection: enable                                                     ││ │  │        ┘         
+  │ clusterName: honeycluster                                                      ││ │  │                 
+  │ excludeNamespaces: kubescape,kube-system,kube-public,kube-node-lease,kubeconfi ││ │  │      
+  │ g,gmp-system,gmp-public,honey,storm,lightening,cert-manager,openebs            ││ │  │      
+  │ ksNamespace: honey                                                             ││ │ ─│──────
+  │ nodeAgent:                                                                     ││ │  ┘     
+  │   config:                                                                      ││ │   
+  │     learningPeriod: 2m                                                         ││ │─
+  │     maxLearningPeriod: 5m                                                      ││ │ 
+  │     updatePeriod: 1m                                                           ││ │ 
+  │   env:                                                                         ││ │
+  │     - name: NodeName                                                           ││ │
+  │       valueFrom:                                                               ││─│
+  │         fieldRef:                                                              ││ ┘
+  │           fieldPath: spec.nodeName                                          
+  ││                                                                                  
+```
+
 In the beginning, we should not have any ApplicationProfiles.
 
 ```sh
