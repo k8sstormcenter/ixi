@@ -134,6 +134,10 @@ kubectl create deployment --image=nginx nginx -n nginx
 ```
 kubectl logs -n honey node-agent-xxx
 ```
+or
+```
+kubectl logs -n honey -l app=node-agent -f -c node-agent
+```
 
 will always look like this:
 ```json

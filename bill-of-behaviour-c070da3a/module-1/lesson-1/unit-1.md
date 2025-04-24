@@ -35,7 +35,7 @@ kind: warning
 ---
 LIVE REWRITE OF THIS LAB ONGOING RIHGT NOW
 
-The reason this is not very clean right now, is that `k0s` turned out to have a triggering issue that I just couldn't find the root cause of. So while suboptimal, we ll use `kind` until further notice
+The reason this is not very clean right now, is that `k0s` turned out to have a triggering issue that I just couldn't find the root cause of. So while suboptimal, we ll use `kind` -> USING FULL CLUSTER NOW until further notice
 ::
 
 
@@ -43,7 +43,7 @@ The reason this is not very clean right now, is that `k0s` turned out to have a 
 git clone https://github.com/k8sstormcenter/honeycluster.git
 cd honeycluster
 git checkout 152-implement-bill-of-behaviour-demo-lab 
-make kubescape-bob-kind
+make storage kubescape-bob-kind
 ```
 
 <!-- 
@@ -81,7 +81,7 @@ Congrats!
  -->
 
 ## 1 Deploy
-Using one of the `kubescape-demo`** apps, we deploy a ping utility called `webapp` that has
+Using a well-known `demo`** app, we deploy a ping utility called `webapp` that has
 
 *   **a) Desired functionality:** it pings things.
 *   **b) Undesired functionality:** it is vulnerable to injection (runtime is compromised).
@@ -138,7 +138,8 @@ If you get `True`, proceed:
 
 
 
-We assume that the full set of `benign behaviour` consists of the `webapp` performing a few pings interally to our `k0s` cluster. Thus, we simply make the app execute a few such pings via the `nodeport`, which is conviently exposed on our k0s-node, already:
+We assume that the full set of `benign behaviour` consists of the `webapp` performing a few pings interally to our  cluster. Thus, we simply make the app execute a few such `pings`. This is not representative for all possible things
+that the `webapp` could do, but lets keep it simple, for starts.
 
 
 Open a new tab :tab-locator-inline{text='new terminal' machine='dev-machine' :new=true}

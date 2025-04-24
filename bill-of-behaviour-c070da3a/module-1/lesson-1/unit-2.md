@@ -6,7 +6,7 @@ title: Profiling with Kubescape
 name: honeycluster-up
 ---
 
-Now, we are still the vendor have the `webapp` deployed on our cluster. 
+Now, we are still the vendor and have the `webapp` deployed on our cluster. 
 We are producing `benign` traffic that triggers all known behaviour of our `webapp`
 
 Viktor made a video of this feature, so if you dont know kubescape, consider watching https://www.youtube.com/watch?v=xilNX_mh6vE 
@@ -22,12 +22,24 @@ or traffic replay.
 ::
 
 
-We have installed kubescape, it will help us use `eBPF/Inspector Gadget` in a hands-off manner via its nodeagent-component. So  we'll use a config that only installs the runtime-behaviour module produce an output that an end-user can directly consume, without having to deal with inspector gadget or ebpf or low-level stuff.
+We have installed `kubescape` (see the Makefile for details), it will help us use `eBPF/Inspector Gadget` in a hands-off manner via its nodeagent-component. So  we'll use a config that only installs the runtime-behaviour module produce an output that an end-user can directly consume, without having to deal with inspector gadget or ebpf or low-level stuff.
+
+```sh
+kubectl get pods -n honey -l app.kubernetes.io/instance=kubescape
+```
+<div style="background-color: #f0f8ff; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+
+__Optional__:
+
+While waiting for all pods to be ready and if you're the graphical type, you can move over into the other tab :tab-locator-inline{text='Explorer' name='Explorer'} and watch what's happening on the cluster.
+
+I DON'T recommend the Explorer on the 3-node kubernetes cluster, its too slow -> works well on `k0s` though...
+
+`k9s` is better as UI here. 
+</div>
 
 
-While we re waiting, lets move over into the other tab :tab-locator-inline{text='Explorer' name='Explorer'} and watch what's happening on our k0s cluster.
-
-::simple-task
+<!-- ::simple-task
 ---
 :tasks: tasks
 :name: make
@@ -37,11 +49,11 @@ Waiting for all pods to come up
 
 #completed
 Congrats! 
-::
+:: -->
 
 You can watch the pods becoming blue and select those items you d like to `watch` with the `eye` icon.
 
- ::image-box
+ <!-- ::image-box
 ---
 :src: module-1/lesson-1/img/explorer.png
 :alt: 'This image is still not found - Known issue'
@@ -56,20 +68,29 @@ slides:
   alt: "test2 is it finding the png?"
 ---
 ::
--->
-Well! Now, just to make sure, lets check that all kubescape pods are healthy, cause we need it to 
-generate our BoB
+--> 
+Once all kubescape pods are healthy, we can move on and generate our BoB
 
-
-
-```sh
+```bash
 kubectl get pods -n honey -l app.kubernetes.io/instance=kubescape
 ```
-Next, we ll check the config on how long we are expected to wait until a profile is being produced
+You want the `STATUS` of all pods to be `Running`
+```
+laborant@dev-machine:~/honeycluster$ kubectl get pods -n honey -l app.kubernetes.io/instance=kubescape
+NAME                         READY   STATUS    RESTARTS   AGE
+kubescape-6685556665-5p6sh   1/1     Running   0          21m
+kubevuln-5645447f88-6dc65    1/1     Running   0          21m
+node-agent-5n6fr             1/1     Running   0          4m50s
+node-agent-5wxzs             1/1     Running   0          4m56s
+node-agent-w4c2g             1/1     Running   0          5m41s
+operator-5dddf6f84-8nlpl     1/1     Running   0          21m
+storage-54597f8454-nlgfh     1/1     Running   0          21m
+```
+Next, we ll check the configuration in order to understand  long we are expected to wait until a profile is considered ready.
+The settings are in a `ConfigMap` and `CustomResourceDefinition` named RuntimeRuleAlertBinding
 
 ```sh
 kubectl describe cm -n honey ks-cloud-config
-kubectl get applicationprofile -A
 kubectl describe RuntimeRuleAlertBinding all-rules-all-pods
 ```
 
