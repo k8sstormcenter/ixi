@@ -1,9 +1,9 @@
 ---
 kind: unit
 
-title: Create a Bill of Behaviour - Setup the app
+title: Setup the app
 
-name: simple-app-profile
+name: debug-kubescape-1
 ---
 
 Pretending we are the supplier company of the software `webapp` , which is a single container php application,
@@ -15,46 +15,12 @@ For this, we need to:
 * Produce traffic: execute/trigger all known behaviour (by e.g. using a load test or more old-fashioned cypress tests)
 * Profile the benign behaviour
 * Export the profile
-  
 
-
-## 0 Clone repository for this lab 
-Make sure, you have this lab open in chrome. Safari doesnt work. 
-
-Please hover over the bottom right corner of the below box, when the `Copy` symbol appears, click it and `Paste` it into the right hand `terminal` (you need to activate the playground first). In Windows, you need to right click or configure what keybindings your browser is listening to.
-
-
-
-You now are running a development environment of `kubernetes` called `kind`, in Module 3, we will run a different flavour, called `k3s`, which is a real kubernetes distribution. This is to showcase, that a vendor and a consumer will likely use different infrastructure. kind is often used in CICD, but it runs `kubernetes in docker` and the reason we re currently using it, is that I had to quickly switch.
-On the positive side, it ll allow us to argue if running this entire BoB-generation inside CI/CD is an option.
-To safe you the config, the following repo contains settings that  WIP: 🤣 __will__ work 😂 
-
-::remark-box
----
-kind: warning
----
-LIVE REWRITE OF THIS LAB ONGOING RIHGT NOW
-
-The reason this is not very clean right now, is that `k0s` turned out to have a triggering issue that I just couldn't find the root cause of. So while suboptimal, we ll use `kind` until further notice
-::
-
-
+## 0 Clone repo
 ```git
-# For AMD64 / x86_64
-[ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.27.0/kind-linux-amd64
-# For ARM64
-[ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.27.0/kind-linux-arm64
-chmod +x ./kind
-sudo mv ./kind /usr/local/bin/kind
-curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-chmod +x ./kubectl
-sudo mv ./kubectl /usr/local/bin/kubectl
 git clone https://github.com/k8sstormcenter/honeycluster.git
 cd honeycluster
 git checkout 152-implement-bill-of-behaviour-demo-lab 
-make cluster-up
-make kubescape-bob-kind
 ```
 ::simple-task
 ---
@@ -69,37 +35,8 @@ Waiting for you to clone the repo
 Congrats! 
 ::
 
-<!--
-::remark-box
----
-kind: warning
----
-
-__There are issues that are related to k0s arch... must switch the lab to a different flavour:__
-
-Sequence: kubescape doesnt trigger on the app deployment... I m not believing the current profile to be correct (ie it is incomplete) for k0s ... I suspect its an event in etcd that is k0s simply doesnt have
-```sh
-make bob
-```
- debug...wait for all 4 pods to be there esp nodeagent
-```sh
-kubectl logs -n honey node-agent-xxxtab completexxx
-```
- kubescape nodeagent needs to be restarted after it has found the storage, but  there is some other race-condition , or at least its not eventually consistent. If the storage is not ready at the first startup, then nodeagent ignores all apps and doesnt produce anything.
- So, currently, there are unknown conditions that must be true before it all works.
- Empirically, after the storage is there, restart the deployment making sure the config is read
-
-TODO: switch to a different type of k8s for this lab, unless you find the issue. The current k0s profiles always miss the startup but record the kill. I ve not found why
-
-```sh
-kubectl apply -f ~/honeycluster/honeystack/kubescape/kscloudconfig.yaml
-kubectl rollout restart -n honey ds node-agent
-```  
-::
--->
-
-
 ## 1 Deploy
+
 Using one of the `kubescape-demo`** apps, we deploy a ping utility called `webapp` that has
 
 *   **a) Desired functionality:** it pings things.
@@ -108,8 +45,10 @@ Using one of the `kubescape-demo`** apps, we deploy a ping utility called `webap
 *   **c) Tampering with the artefact:** In module 2, we will additionally tamper with the artifact and make it create a backdoor (supply chain is compromised).
     *   _This is to mimic a SupplyChain corruption between vendor and you._
 
+
+
 ```sh
-cd traces/kubescape-verify/attacks/webapp/
+cd traces/kubescape-verify/attacks/webapp_debug_k0s/
 chmod +x setup.sh
 ./setup.sh
 ```
@@ -125,10 +64,10 @@ chmod +x setup.sh
 Webapp is being deployed..
 
 #completed
-Webapp is running 
+Webapp is running (WIP this check is always green)
 ::
 
-If you prefer to manually checkout your app is up:
+
 ```sh
 kubectl get pods -l app=webapp -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'
 ```
@@ -137,8 +76,8 @@ If you get `True`, proceed:
 
 
 **: credit belongs entirely to the original authors
-
-<!-- ```sh
+<!-- 
+```sh
 kubectl logs -n honey -l app=node-agent -f -c node-agent
 ```
 or debug:
@@ -149,24 +88,10 @@ kubectl logs -n honey node-agent-<TAB COMPLETE>
 ```
 kubectl create ns nginx
 kubectl create deployment --image=nginx nginx -n nginx
-``` -->
+```  -->
 
 ## 2 Generate Traffic of benign behaviour
-
-<div style="background-color: #f0f8ff; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
-
-**Benign** (*adjective*) [bi-ˈnīn] 
-*   **Benignity** (*noun*) [bi-ˈnig-nə-tē]
-*   **Benignly** (*adverb*) [bi-ˈnīn-lē]
-
-**Definitions/SYNONYMS:**
-
-1.  Of a mild type or character that does not threaten health or life. *HARMLESS*.
-2.  Of a gentle disposition: *GRACIOUS*.
-3.  Showing kindness and gentleness. *FAVORABLE*, *WHOLESOME*.
-</div>
-
-
+Optional: you could expose this app on port `58080` and use a new brower tab (see setup.sh)
 
 
 We assume that the full set of `benign behaviour` consists of the `webapp` performing a few pings interally to our `k0s` cluster. Thus, we simply make the app execute a few such pings via the `nodeport`, which is conviently exposed on our k0s-node, already:
@@ -175,37 +100,68 @@ We assume that the full set of `benign behaviour` consists of the `webapp` perfo
 Open a new tab :tab-locator-inline{text='another terminal' :new=true}
 
 First, find the nodeport IP
-<!-- ```sh
+```sh
 export port=$(kubectl describe svc/webapp | grep NodePort | awk '{print $3}' | cut -d '/' -f1)
 echo "NodePort is: $port"
- curl 172.16.0.2:$port/ping.php?ip=172.16.0.2
-while true; do curl 172.16.0.2:$port/ping.php?ip=172.16.0.2; sleep 10; done
-``` -->
+```
 now, test the ping:
 
 ```sh
-curl localhost:8080/ping.php?ip=172.16.0.2
+curl 172.16.0.2:$port/ping.php?ip=172.16.0.2
 ```
-if that works, let it loop 
+if that works, lets loop it for a bit.
 
 ```sh
-while true; do curl localhost:8080/ping.php?ip=172.16.0.2; sleep 10; done
+while true; do curl 172.16.0.2:$port/ping.php?ip=172.16.0.2; sleep 10; done
 ```
-Do not kill the looping.
-Please, switch back to the original :tab-locator-inline{text='k0s-01' name='k0s-01'} tab, and you are ✅
-::remark-box
----
-kind: warning
----
 
-
-__Optional__: you could expose this app on port `58080` and use a new brower tab (see setup.sh)
-```
-#sudo socat TCP-LISTEN:58080,bind=172.16.0.2,reuseaddr,fork TCP:127.0.0.1:58080&
-```
-::
 
 <!-- 
+
+
+After you did this a couuple of times, check that the profile has recorded this `benign behaviour`
+```sh
+kubectl describe applicationprofile pod-ping-app 
+```
+
+``` json
+spec:                                                                            
+  6   architectures:                                                                 
+  7   - amd64                                                                        
+  8   containers:                                                                    
+  9   - capabilities:                                                                
+ 10     - NET_RAW                                                                    
+ 11     - SETUID                                                                     
+ 12     endpoints: null                                                              
+ 13     execs:                                                                       
+ 14     - args:                                                                      
+ 15       - /bin/sh                                                                  
+ 16       - -c                                                                       
+ 17       - ping -c 4 172.16.0.2                                                     
+ 18       path: /bin/sh                                                              
+ 19     - args:                                                                      
+ 20       - /bin/ping                                                                
+ 21       - -c                                                                       
+ 22       - "4"                                                                      
+ 23       - 172.16.0.2                                                               
+ 24       path: /bin/ping                                                            
+ 25     imageID: docker.io/amitschendel/ping-app@sha256:99fe0f297bbaeca1896219486de8d777fa46bd5b0ca
+be8488de77405149c524d
+ 26     imageTag: docker.io/amitschendel/ping-app:latest                             
+ 27     name: ping-app                                                               
+ 28     opens:                                                                       
+ 29     - flags:                                                                     
+ 30       - O_CLOEXEC                                                                
+ 31       - O_RDONLY                                                                 
+ 32       path: /usr/lib/x86_64-linux-gnu/libunistring.so.2.1.0                      
+ 33     - flags:                                                                     
+ 34       - O_RDONLY                                                                 
+ 35       path: /var/www/html/ping.php 
+```
+
+
+We want to wait until the status is completed
+
 
 ::simple-task
 ---
@@ -219,6 +175,22 @@ Profile is still not complete
 Application profile is now complete
 ::
 
+
+```
+kubectl describe applicationprofile pod-ping-app 
+...
+...
+Annotations:  kubescape.io/completion: partial
+              kubescape.io/instance-id: apiVersion-v1/namespace-default/kind-Pod/name-ping-app
+              kubescape.io/resource-size: 9
+              kubescape.io/status: completed
+```
+
+Now, we must save this above file onto disk:
+
+```sh
+kubectl describe applicationprofile pod-ping-app 
+```
 
 
 <!-- [Debug: restart the nodeagent]

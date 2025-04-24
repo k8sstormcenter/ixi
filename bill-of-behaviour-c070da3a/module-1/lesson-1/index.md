@@ -13,8 +13,9 @@ updatedAt: 2024-01-01
 
 cover: __static__/cover.png
 
+
 playground:
-  name: docker
+  name: k8s-omni
 
 # playground:
 #   name: k0s
@@ -47,11 +48,6 @@ tasks:
       [[ $(kubectl wait --for=condition=Ready --all pods -n honey --timeout=600s && echo "true" || echo "false") == "true" ]]
 
 
-  appprofempty:
-    needs:
-    - make
-    run: |
-      [[ -z "$(kubectl get applicationprofile -A | tail -n +2)" ]]
 
   webapp:
     run: |
