@@ -177,7 +177,13 @@ However, did you notice that kubescape isnt showing us any logs?
 Given our exessively limited `benign behaviour`, this isnt super interesting.
 
 Since about `90` percent of the files are linked libs that are loaded at startup: lets
-restart the `pod` NOT the `deployment` . We need the `deployment` to retain the same name.
+restart the `pod` NOT the `deployment` . 
+
+
+If we want kubescape to ignore the new deployment: we need the `deployment` to retain the same name.
+WE ARE FIRST, HOWEVER, CHANGE THE NAME and rerecord the profile
+
+That way we can explicitely compare if we missed something.
 
 Open a third terminal and:
 
@@ -739,3 +745,26 @@ bob.yaml:
 To prove the point, we will now patch the `new` ApplicationProfile
 with a `BoB` that includes the restart and the kill only a `pod`, instead of a `rollout restart`.
 This way, we ll preserve the name and theoretically, kubescape should then remain entirely silent
+
+```sh
+export rs=$(kubectl get replicaset -n default -o jsonpath='{.items[0].metadata.name}')
+kubectl describe applicationprofile replicaset-$rs
+```
+```sh
+kubectl get applicationProfile replicaset-$rs  -o yaml > ~/secondappprofile.yaml
+```
+
+now edit that profile (so it keeps it name), but use the content of the one from Module 1 that
+`includes the restart` !!!
+```sh   
+echo $rs
+envsubst < /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_applicationprofile_restart.yaml > /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_restart.yaml
+```
+
+`patch` the ping-profile:
+
+```sh
+kubectl apply -f /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_restart.yaml
+```
+
+and now we just kill the pod itself (not the replicaset)
