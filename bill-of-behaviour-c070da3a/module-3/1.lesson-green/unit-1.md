@@ -13,8 +13,7 @@ We, ll cover the following
  
 * Get to know our k3s installation
 * Deploy kubescape in a slightly different config to give us anomaly detection
-* Pull down the artefact `webapp` and deploy it
-* Verify some things
+* Follow the 2-step installation process
 * Watch it for the two types of anomalies
   
 
