@@ -550,12 +550,13 @@ while true; do curl localhost:8080/ping.php?ip=172.16.0.2; sleep 10; done
 ```
 
 
-Ok so now you ll get more `supposed mismatches`  , but if we compare it with our `bob.yaml` those are supposed
-to be known, so ... not sure how to teach kubescape to not emit them
+Ok so now you ll get more `supposed mismatches`  and we ll analyse each one, and compare with the `bob.yaml`
+and find that in fact, the behaviour would be allowed (if the kubescape-ApplicationProfile had again been patched)
 
-WIP: more debugging is needed
 
-### Diff 1 that shouldnt be a diff
+This is a nice indication, that across the two very different platforms these fileaccesses are not divergent (again, be wary of how tiny this test is)
+
+### Diff 1 that isnt a diff
 
 ```json
 {
@@ -690,7 +691,7 @@ bob.yaml
       path: /lib/x86_64-linux-gnu/libcap.so.2.44
 ```
 
-### Diff 2 that should not be a diff
+### Diff 2 that isnt a diff
 
 ```json
 {"BaseRuntimeMetadata":{"alertName":"Unexpected file access","arguments":{"flags":["O_RDONLY"],"path":"/var/www/html/ping.php"},"infectedPID":41229,"md5Hash":"4e79f11b07df8f72e945e0e3b3587177","sha1Hash":"b361a04dcb3086d0ecf960d3acaa776c62f03a55","severity":1,"size":"730 kB","timestamp":"2025-04-25T17:58:11.154208794Z","trace":{}},"CloudMetadata":null,"RuleID":"R0002","RuntimeK8sDetails":{"clusterName":"honeycluster","containerName":"ping-app","hostNetwork":false,"image":"ghcr.io/k8sstormcenter/webapp:latest","imageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084","namespace":"default","containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","podName":"webapp-765cc5d648-bb44n","podNamespace":"default","workloadName":"webapp","workloadNamespace":"default","workloadKind":"Deployment"},"RuntimeProcessDetails":{"processTree":{"pid":41204,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41129,"pcomm":"containerd-shim","uid":0,"gid":0,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"apache2␟41229":{"pid":41229,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41204,"pcomm":"apache2","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"sh␟48569":{"pid":48569,"cmdline":"/bin/sh -c ping -c 4 172.16.0.2","comm":"sh","ppid":41229,"pcomm":"apache2","hardlink":"/bin/dash","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","upperLayer":false,"cwd":"/var/www/html","path":"/bin/dash"}}}}},"containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581"},"event":{"runtime":{"runtimeName":"containerd","containerId":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","containerName":"ping-app","containerImageName":"ghcr.io/k8sstormcenter/webapp:latest","containerImageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084"},"k8s":{"namespace":"default","podName":"webapp-765cc5d648-bb44n","podLabels":{"app":"webapp","pod-template-hash":"765cc5d648"},"containerName":"ping-app","owner":{}},"timestamp":1745603891154208794,"type":"normal"},"level":"error","message":"Unexpected file access: /var/www/html/ping.php with flags O_RDONLY","msg":"Unexpected file access","time":"2025-04-25T17:58:11Z"}
@@ -704,7 +705,7 @@ bob.yaml:
       path: /var/www/html/ping.php
 ```
 
-### Diff 3 that should not be a diff
+### Diff 3 that isnt a diff
 
 ```json
 {"BaseRuntimeMetadata":{"alertName":"Unexpected process launched","arguments":{"args":["/bin/ping","-c","4","172.16.0.2"],"exec":"/bin/ping","retval":0},"infectedPID":48363,"severity":5,"size":"4.1 kB","timestamp":"2025-04-25T17:57:44.972646388Z","trace":{}},"CloudMetadata":null,"RuleID":"R0001","RuntimeK8sDetails":{"clusterName":"honeycluster","containerName":"ping-app","hostNetwork":false,"image":"ghcr.io/k8sstormcenter/webapp:latest","imageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084","namespace":"default","containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","podName":"webapp-765cc5d648-bb44n","podNamespace":"default","podLabels":{"app":"webapp","pod-template-hash":"765cc5d648"},"workloadName":"webapp","workloadNamespace":"default","workloadKind":"Deployment"},"RuntimeProcessDetails":{"processTree":{"pid":41204,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41129,"pcomm":"containerd-shim","uid":0,"gid":0,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"apache2␟41230":{"pid":41230,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41204,"pcomm":"apache2","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"sh␟48362":{"pid":48362,"cmdline":"/bin/sh -c ping -c 4 172.16.0.2","comm":"sh","ppid":41230,"pcomm":"apache2","hardlink":"/bin/dash","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","upperLayer":false,"cwd":"/var/www/html","path":"/bin/dash","childrenMap":{"ping␟48363":{"pid":48363,"cmdline":"/bin/ping -c 4 172.16.0.2","comm":"ping","ppid":48362,"pcomm":"sh","hardlink":"/bin/ping","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","upperLayer":false,"cwd":"/var/www/html","path":"/bin/ping"}}}}}}},"containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581"},"event":{"runtime":{"runtimeName":"containerd","containerId":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","containerName":"ping-app","containerImageName":"ghcr.io/k8sstormcenter/webapp:latest","containerImageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084"},"k8s":{"namespace":"default","podName":"webapp-765cc5d648-bb44n","podLabels":{"app":"webapp","pod-template-hash":"765cc5d648"},"containerName":"ping-app","owner":{}},"timestamp":1745603864972646388,"type":"normal"},"level":"error","message":"Unexpected process launched: /bin/ping","msg":"Unexpected process launched","time":"2025-04-25T17:57:44Z"}
@@ -718,7 +719,7 @@ bob.yaml:
       path: /bin/ping
 ```
 
-### Diff 4 that should not be a diff
+### Diff 4 that isnt a diff
 
 ```json
 {"BaseRuntimeMetadata":{"alertName":"Unexpected process launched","arguments":{"args":["/bin/sh","-c","ping -c 4 172.16.0.2"],"exec":"/bin/sh","retval":0},"infectedPID":48469,"severity":5,"size":"4.1 kB","timestamp":"2025-04-25T17:57:58.054963657Z","trace":{}},"CloudMetadata":null,"RuleID":"R0001","RuntimeK8sDetails":{"clusterName":"honeycluster","containerName":"ping-app","hostNetwork":false,"image":"ghcr.io/k8sstormcenter/webapp:latest","imageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084","namespace":"default","containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","podName":"webapp-765cc5d648-bb44n","podNamespace":"default","podLabels":{"app":"webapp","pod-template-hash":"765cc5d648"},"workloadName":"webapp","workloadNamespace":"default","workloadKind":"Deployment"},"RuntimeProcessDetails":{"processTree":{"pid":41204,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41129,"pcomm":"containerd-shim","uid":0,"gid":0,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"apache2␟41231":{"pid":41231,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41204,"pcomm":"apache2","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"sh␟48469":{"pid":48469,"cmdline":"/bin/sh -c ping -c 4 172.16.0.2","comm":"sh","ppid":41231,"pcomm":"apache2","hardlink":"/bin/dash","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","upperLayer":false,"cwd":"/var/www/html","path":"/bin/dash"}}}}},"containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581"},"event":{"runtime":{"runtimeName":"containerd","containerId":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","containerName":"ping-app","containerImageName":"ghcr.io/k8sstormcenter/webapp:latest","containerImageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084"},"k8s":{"namespace":"default","podName":"webapp-765cc5d648-bb44n","podLabels":{"app":"webapp","pod-template-hash":"765cc5d648"},"containerName":"ping-app","owner":{}},"timestamp":1745603878054963657,"type":"normal"},"level":"error","message":"Unexpected process launched: /bin/sh","msg":"Unexpected process launched","time":"2025-04-25T17:57:58Z"}
@@ -732,3 +733,9 @@ bob.yaml:
       - ping -c 4 172.16.0.2
       path: /bin/sh
 ```
+
+## 9 Patch again and this time make the name stick
+
+To prove the point, we will now patch the `new` ApplicationProfile
+with a `BoB` that includes the restart and the kill only a `pod`, instead of a `rollout restart`.
+This way, we ll preserve the name and theoretically, kubescape should then remain entirely silent
