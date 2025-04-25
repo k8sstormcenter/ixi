@@ -6,7 +6,7 @@ title: Building and Tagging the OCI artefact
 name: oci-build-tag
 ---
 
-Idea: WIP 
+### Vendor publishes artefact with BoB
 
 * extract a json conformant with predicate format from the ebpf-recording 
 * if this is a Container: pretend use docker `--bob=true` build ...
@@ -122,7 +122,7 @@ TODO: This must be produced this for each `architecture`,  file_access directly 
 }
 ```
 
-## 2) Building the artefact with the bob included
+## 2) Building the artefact with the BoB included
 
 
 Need to reclone, cause this is a new environment with docker/buildx , not k0s

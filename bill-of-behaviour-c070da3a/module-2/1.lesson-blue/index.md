@@ -1,7 +1,7 @@
 ---
 kind: lesson
 
-title: Publish in CI/CD
+title: Vendor -Publish in CI/CD
 
 description: |
   extract, attach, sign and push

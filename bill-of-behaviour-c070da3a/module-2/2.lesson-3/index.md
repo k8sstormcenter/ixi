@@ -1,7 +1,7 @@
 ---
 kind: lesson
 
-title: Ingest and verify BoB and SBOM
+title: Customer - Ingest and verify BoB 
 description: |
   Pull artefact from OCI, verify the signature and discuss the difference to SBOMs
 
