@@ -689,3 +689,18 @@ bob.yaml
       - O_RDONLY
       path: /lib/x86_64-linux-gnu/libcap.so.2.44
 ```
+
+### Diff 2 that should not be a diff
+
+```json
+{"BaseRuntimeMetadata":{"alertName":"Unexpected file access","arguments":{"flags":["O_RDONLY"],"path":"/var/www/html/ping.php"},"infectedPID":41229,"md5Hash":"4e79f11b07df8f72e945e0e3b3587177","sha1Hash":"b361a04dcb3086d0ecf960d3acaa776c62f03a55","severity":1,"size":"730 kB","timestamp":"2025-04-25T17:58:11.154208794Z","trace":{}},"CloudMetadata":null,"RuleID":"R0002","RuntimeK8sDetails":{"clusterName":"honeycluster","containerName":"ping-app","hostNetwork":false,"image":"ghcr.io/k8sstormcenter/webapp:latest","imageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084","namespace":"default","containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","podName":"webapp-765cc5d648-bb44n","podNamespace":"default","workloadName":"webapp","workloadNamespace":"default","workloadKind":"Deployment"},"RuntimeProcessDetails":{"processTree":{"pid":41204,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41129,"pcomm":"containerd-shim","uid":0,"gid":0,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"apache2␟41229":{"pid":41229,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41204,"pcomm":"apache2","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"sh␟48569":{"pid":48569,"cmdline":"/bin/sh -c ping -c 4 172.16.0.2","comm":"sh","ppid":41229,"pcomm":"apache2","hardlink":"/bin/dash","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","upperLayer":false,"cwd":"/var/www/html","path":"/bin/dash"}}}}},"containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581"},"event":{"runtime":{"runtimeName":"containerd","containerId":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","containerName":"ping-app","containerImageName":"ghcr.io/k8sstormcenter/webapp:latest","containerImageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084"},"k8s":{"namespace":"default","podName":"webapp-765cc5d648-bb44n","podLabels":{"app":"webapp","pod-template-hash":"765cc5d648"},"containerName":"ping-app","owner":{}},"timestamp":1745603891154208794,"type":"normal"},"level":"error","message":"Unexpected file access: /var/www/html/ping.php with flags O_RDONLY","msg":"Unexpected file access","time":"2025-04-25T17:58:11Z"}
+```
+
+
+```
+bob.yaml:
+    - flags:
+      - O_RDONLY
+      path: /var/www/html/ping.php
+```
+
