@@ -704,3 +704,31 @@ bob.yaml:
       path: /var/www/html/ping.php
 ```
 
+### Diff 3 that should not be a diff
+
+```json
+{"BaseRuntimeMetadata":{"alertName":"Unexpected process launched","arguments":{"args":["/bin/ping","-c","4","172.16.0.2"],"exec":"/bin/ping","retval":0},"infectedPID":48363,"severity":5,"size":"4.1 kB","timestamp":"2025-04-25T17:57:44.972646388Z","trace":{}},"CloudMetadata":null,"RuleID":"R0001","RuntimeK8sDetails":{"clusterName":"honeycluster","containerName":"ping-app","hostNetwork":false,"image":"ghcr.io/k8sstormcenter/webapp:latest","imageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084","namespace":"default","containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","podName":"webapp-765cc5d648-bb44n","podNamespace":"default","podLabels":{"app":"webapp","pod-template-hash":"765cc5d648"},"workloadName":"webapp","workloadNamespace":"default","workloadKind":"Deployment"},"RuntimeProcessDetails":{"processTree":{"pid":41204,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41129,"pcomm":"containerd-shim","uid":0,"gid":0,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"apache2␟41230":{"pid":41230,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41204,"pcomm":"apache2","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"sh␟48362":{"pid":48362,"cmdline":"/bin/sh -c ping -c 4 172.16.0.2","comm":"sh","ppid":41230,"pcomm":"apache2","hardlink":"/bin/dash","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","upperLayer":false,"cwd":"/var/www/html","path":"/bin/dash","childrenMap":{"ping␟48363":{"pid":48363,"cmdline":"/bin/ping -c 4 172.16.0.2","comm":"ping","ppid":48362,"pcomm":"sh","hardlink":"/bin/ping","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","upperLayer":false,"cwd":"/var/www/html","path":"/bin/ping"}}}}}}},"containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581"},"event":{"runtime":{"runtimeName":"containerd","containerId":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","containerName":"ping-app","containerImageName":"ghcr.io/k8sstormcenter/webapp:latest","containerImageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084"},"k8s":{"namespace":"default","podName":"webapp-765cc5d648-bb44n","podLabels":{"app":"webapp","pod-template-hash":"765cc5d648"},"containerName":"ping-app","owner":{}},"timestamp":1745603864972646388,"type":"normal"},"level":"error","message":"Unexpected process launched: /bin/ping","msg":"Unexpected process launched","time":"2025-04-25T17:57:44Z"}
+```
+```
+    - args:
+      - /bin/ping
+      - -c
+      - "4"
+      - 172.16.0.2
+      path: /bin/ping
+```
+
+### Diff 4 that should not be a diff
+
+```json
+{"BaseRuntimeMetadata":{"alertName":"Unexpected process launched","arguments":{"args":["/bin/sh","-c","ping -c 4 172.16.0.2"],"exec":"/bin/sh","retval":0},"infectedPID":48469,"severity":5,"size":"4.1 kB","timestamp":"2025-04-25T17:57:58.054963657Z","trace":{}},"CloudMetadata":null,"RuleID":"R0001","RuntimeK8sDetails":{"clusterName":"honeycluster","containerName":"ping-app","hostNetwork":false,"image":"ghcr.io/k8sstormcenter/webapp:latest","imageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084","namespace":"default","containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","podName":"webapp-765cc5d648-bb44n","podNamespace":"default","podLabels":{"app":"webapp","pod-template-hash":"765cc5d648"},"workloadName":"webapp","workloadNamespace":"default","workloadKind":"Deployment"},"RuntimeProcessDetails":{"processTree":{"pid":41204,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41129,"pcomm":"containerd-shim","uid":0,"gid":0,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"apache2␟41231":{"pid":41231,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":41204,"pcomm":"apache2","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2","childrenMap":{"sh␟48469":{"pid":48469,"cmdline":"/bin/sh -c ping -c 4 172.16.0.2","comm":"sh","ppid":41231,"pcomm":"apache2","hardlink":"/bin/dash","uid":33,"gid":33,"startTime":"0001-01-01T00:00:00Z","upperLayer":false,"cwd":"/var/www/html","path":"/bin/dash"}}}}},"containerID":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581"},"event":{"runtime":{"runtimeName":"containerd","containerId":"a2f0834dd6b6a1b8444c420158e8b73c5345ac84eeb487701a3eb6537591e581","containerName":"ping-app","containerImageName":"ghcr.io/k8sstormcenter/webapp:latest","containerImageDigest":"sha256:f4a78579cffad0fda06a554f11138d6dc28a5a97506edbf7b6f05413e4e3e084"},"k8s":{"namespace":"default","podName":"webapp-765cc5d648-bb44n","podLabels":{"app":"webapp","pod-template-hash":"765cc5d648"},"containerName":"ping-app","owner":{}},"timestamp":1745603878054963657,"type":"normal"},"level":"error","message":"Unexpected process launched: /bin/sh","msg":"Unexpected process launched","time":"2025-04-25T17:57:58Z"}
+```
+```
+bob.yaml:
+
+    - args:
+      - /bin/sh
+      - -c
+      - ping -c 4 172.16.0.2
+      path: /bin/sh
+```
