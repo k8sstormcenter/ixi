@@ -27,7 +27,7 @@ Please hover over the bottom right corner of the below box, when the `Copy` symb
 
 You now are running a development environment of `kubernetes`, in Module 3, we will run a different flavour, called `k3s`, which is a real kubernetes distribution. This is to showcase, that a vendor and a consumer will likely use different infrastructure. 
 
-This lab module 1 has also been executed on `kind`, which is often used in CI/CD, but it runs `kubernetes in docker`
+This Lab-Module 1 has also been executed on `kind`, which is often used in CI/CD, but it runs `kubernetes in docker`
 allowing us to argue if running this entire BoB-generation inside CI/CD is an option. In the repo, there are `BoB` produced for a variety of kubernetes's/archs and I will be adding a discussion of their differences soon.
 
 

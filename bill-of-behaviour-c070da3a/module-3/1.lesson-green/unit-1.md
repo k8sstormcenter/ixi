@@ -47,6 +47,10 @@ make kubescape
 
 ## 2 pull down artefact
 
+```sh
+some mystical command like ctr pull
+```
+
 
 ## 3 deploy artefact
 
