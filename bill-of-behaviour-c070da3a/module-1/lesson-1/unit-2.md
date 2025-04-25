@@ -31,11 +31,13 @@ kubectl get pods -n honey -l app.kubernetes.io/instance=kubescape
 
 __Optional__:
 
-While waiting for all pods to be ready and if you're the graphical type, you can move over into the other tab :tab-locator-inline{text='Explorer' name='Explorer'} and watch what's happening on the cluster.
+While waiting for all pods to be ready, you could spend the time playing with the UI `k9s`
 
-I DON'T recommend the Explorer on the 3-node kubernetes cluster, its too slow -> works well on `k0s` though...
+<!-- and if you're the graphical type, you can move over into the other tab :tab-locator-inline{text='Explorer' name='Explorer'} and watch what's happening on the cluster.
 
-`k9s` is better as UI here. 
+I DON'T recommend the Explorer on the 3-node kubernetes cluster, its too slow -> works well on `k0s` though... -->
+
+
 </div>
 
 
