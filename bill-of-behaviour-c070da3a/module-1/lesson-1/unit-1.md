@@ -25,17 +25,20 @@ Please hover over the bottom right corner of the below box, when the `Copy` symb
 
 
 
-You now are running a development environment of `kubernetes` called `kind`, in Module 3, we will run a different flavour, called `k3s`, which is a real kubernetes distribution. This is to showcase, that a vendor and a consumer will likely use different infrastructure. kind is often used in CICD, but it runs `kubernetes in docker` and the reason we re currently using it, is that I had to quickly switch.
-On the positive side, it ll allow us to argue if running this entire BoB-generation inside CI/CD is an option.
-To safe you the config, the following repo contains settings that  WIP: 🤣 __will__ work 😂 
+You now are running a development environment of `kubernetes`, in Module 3, we will run a different flavour, called `k3s`, which is a real kubernetes distribution. This is to showcase, that a vendor and a consumer will likely use different infrastructure. 
+
+This lab module 1 has also been executed on `kind`, which is often used in CI/CD, but it runs `kubernetes in docker`
+allowing us to argue if running this entire BoB-generation inside CI/CD is an option. In the repo, there are `BoB` produced for a variety of kubernetes's/archs and I will be adding a discussion of their differences soon.
+
 
 ::remark-box
 ---
 kind: warning
 ---
-LIVE REWRITE OF THIS LAB ONGOING RIHGT NOW
+THIS LAB IS ALPHA, live rewrites `could` be going on. 
 
-The reason this is not very clean right now, is that `k0s` turned out to have a triggering issue that I just couldn't find the root cause of. So while suboptimal, we ll use `kind` -> USING FULL CLUSTER NOW until further notice
+This means, the writing on the left here can change in real time. Since you have found this lab, you likely know
+Constanze, and should something happen that you have issue with, please, ping her in your usual communication channel (`icmp` may not be the right one 🤣)
 ::
 
 

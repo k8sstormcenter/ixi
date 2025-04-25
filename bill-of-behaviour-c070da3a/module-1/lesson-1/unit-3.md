@@ -14,7 +14,12 @@ cat app-profile-webapp.yaml
 ```
 
 
-The following one was recorded on a k0s (you are on a different cluster), so yours should be a lot longer (and I mean `a lot`)
+The following one was recorded on a k0s (you are on a different cluster), so yours should be a lot longer (and I mean `a lot`).
+
+TODO:
+
+Discuss each `block` of this profile here at length.
+
 
 ``` yaml
 Spec:
@@ -83,9 +88,8 @@ Spec:
 
 ## CUSTOMER SIDE SKETCH  (this will be moved into the Module 3)
 
-@EarlyReviewers: now i need to implement the extract this profile into yaml, attach it to container, sign, push, ....lalala
-eventually, a client will do almost the exact same thing, and pull it again, ... this is the sketch of the `alert` of
-`malicious` behaviour of either `runtime exploit of CVE` (aka normal anomaly) or `supply chain tampering` (aka supply chain anomaly)
+@EarlyReviewers: now in Module 2, we need to implement the publication of the BoB into a `predicate`, attach it to container/artefact in OCI compliant way, sign, push,  ....
+on the other side, a client will do almost the exact same thing in reverse: pull, verify signature, extract the BoB, feed it to kubernetes.
 
 
 
