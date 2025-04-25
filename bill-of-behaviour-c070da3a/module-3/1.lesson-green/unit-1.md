@@ -58,29 +58,41 @@ storage-79d6fd9785-gdpx2            1/1     Running   0          20m
 ```
 
 
-Check out the Explorer tab :tab-locator-inline{text='Explorer' name='Explorer'}
+Check out the Explorer tab :tab-locator-inline{text='Explorer' name='Explorer'}, then navigate to `All Objects`
+and expand, hover and toggle the 👁️-Icon on `spdx.softwarecomposition.kubescape.io/v1beta1` -> `ApplicationProfile` , then navigate to
+the bottom `Watched Objects` . You are now watching for these Application Profiles and no longer need to filter
 
-## 2 pull down artefact
+## 2 pull down artefact (not yet implemented)
+WIP: 
 
 ```sh
 some mystical command like ctr pull
 ```
 
+We will simply use our images `k8sstormcenter/webapp:latest` and `k8sstormcenter/webapp-t:latest`
+which are multi-arch reproductions of `docker.io/amitschendel/ping-app:latest` with `-t` meaning it was tampered.
+Their Dockerfiles (and github-workflows)are
+
+https://github.com/k8sstormcenter/honeycluster/blob/152-implement-bill-of-behaviour-demo-lab/.github/workflows/publish-image-kubescape-webapp.yml
 
 ## 3 deploy artefact (first without tampering)
 
-WIP: currently testing the tampered artefact deployment automation
-TODO: Use FIRST the untampered one and just compare k8s and k3s
+Ok, now we pretend to just install that `webapp` image , that we as customer think is the correct one.
 
-Hang on: step 1 is deploying the application profile -> add this TODO
+So, this (will be) the exact same artefact as in Module-1, just on a different tech stack now:
 ```sh
 cd traces/kubescape-verify/attacks/webapp/
 chmod +x setup.sh
 ./setup.sh
 ```
 
+## 4 Use the artefact in a functional, benign way
+So, we again, do the almost same things:
+
+This app was made for pinging, so we ping
+
 Open a new tab :tab-locator-inline{text='new terminal' machine='dev-machine' :new=true}
-Lets test the ping:
+Let's ping:
 
 ```sh
 curl localhost:8080/ping.php?ip=172.16.0.2
