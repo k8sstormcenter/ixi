@@ -170,4 +170,381 @@ We did this to trick kubescape into believing, it has recorded the supplied `BoB
 
 ## 6 watch how k3s is different from k8s
 
+Check your looping tab . It should still be doing its thing.
 
+However, did you notice that kubescape isnt showing us any logs?
+
+Given our exessively limited `benign behaviour`, this isnt super interesting.
+
+Since about `90` percent of the files are linked libs that are loaded at startup: lets
+restart the `pod` NOT the `deployment` . We need the `deployment` to retain the same name.
+
+Open a third terminal and:
+
+```
+kubectl logs -n honey -l app=node-agent --tail=-1 -f
+```
+back in another terminal:
+```
+kubectl rollout restart deployment webapp
+```
+
+
+Now, we noticed that we had `not` recorded the death of `webapp` and its showing up
+as deviation, lets analyse:
+
+```json
+{
+  "BaseRuntimeMetadata":{
+    "alertName":"Unexpected capability used",
+    "arguments":{
+      "capability":"KILL",
+      "syscall":"kill"
+    },
+    "infectedPID":23368,
+    "md5Hash":"4e79f11b07df8f72e945e0e3b3587177",
+    "sha1Hash":"b361a04dcb3086d0ecf960d3acaa776c62f03a55",
+    "severity":5,
+    "size":"730 kB",
+    "timestamp":"2025-04-25T17:42:59.871829481Z",
+    "trace":{}
+  },
+  "CloudMetadata":null,
+  "RuleID":"R0004",
+  "RuntimeK8sDetails":{
+    "clusterName":"honeycluster",
+    "containerName":"ping-app",
+    "hostNetwork":false,
+    "image":"ghcr.io/k8sstormcenter/webapp:latest",
+    "imageDigest":"sha256:31eb54dc4f5e3537a807e1a5cbc2de9d6c0a5f4e423a5137627e664748f03d7f",
+    "namespace":"default",
+    "containerID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8",
+    "podName":"webapp-8b697d7f9-h9mx4",
+    "podNamespace":"default",
+    "workloadName":"webapp",
+    "workloadNamespace":"default",
+    "workloadKind":"Deployment"
+  },
+  "RuntimeProcessDetails":{
+    "processTree":{
+      "pid":23368,
+      "cmdline":"/usr/sbin/apache2 -DFOREGROUND",
+      "comm":"apache2",
+      "ppid":22855,
+      "pcomm":"containerd-shim",
+      "hardlink":"/usr/sbin/apache2",
+      "uid":0,
+      "gid":0,
+      "startTime":"0001-01-01T00:00:00Z",
+      "upperLayer":false,
+      "cwd":"/var/www/html",
+      "path":"/usr/sbin/apache2"
+    },
+    "containerID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8"
+  },
+  "event":{
+    "runtime":{
+      "runtimeName":"containerd",
+      "containerId":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8",
+      "containerName":"ping-app",
+      "containerImageName":"ghcr.io/k8sstormcenter/webapp:latest",
+      "containerImageDigest":"sha256:31eb54dc4f5e3537a807e1a5cbc2de9d6c0a5f4e423a5137627e664748f03d7f"
+    },
+    "k8s":{
+      "namespace":"default",
+      "podName":"webapp-8b697d7f9-h9mx4",
+      "podLabels":{
+        "app":"webapp",
+        "pod-template-hash":"8b697d7f9"
+      },
+      "containerName":"ping-app",
+      "owner":{}
+    },
+    "timestamp":1745602979871829481,
+    "type":"normal"
+  },
+  "level":"error",
+  "message":"Unexpected capability used (capability KILL used in syscall kill)",
+  "msg":"Unexpected capability used",
+  "time":"2025-04-25T17:42:59Z"
+}{
+  "BaseRuntimeMetadata":{
+    "alertName":"Unexpected system call",
+    "arguments":{
+      "syscall":"clock_nanosleep"
+    },
+    "infectedPID":23368,
+    "md5Hash":"4e79f11b07df8f72e945e0e3b3587177",
+    "sha1Hash":"b361a04dcb3086d0ecf960d3acaa776c62f03a55",
+    "severity":1,
+    "size":"730 kB",
+    "timestamp":"2025-04-25T17:43:01.774765335Z",
+    "trace":{}
+  },
+  "CloudMetadata":null,
+  "RuleID":"R0003",
+  "RuntimeK8sDetails":{
+    "clusterName":"honeycluster",
+    "containerName":"ping-app",
+    "hostNetwork":false,
+    "namespace":"default",
+    "containerID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8",
+    "podName":"webapp-8b697d7f9-h9mx4",
+    "podNamespace":"default",
+    "workloadName":"webapp",
+    "workloadNamespace":"default",
+    "workloadKind":"Deployment"
+  },
+  "RuntimeProcessDetails":{
+    "processTree":{
+      "pid":23368,
+      "cmdline":"apache2 -DFOREGROUND",
+      "comm":"apache2",
+      "ppid":22855,
+      "pcomm":"containerd-shim",
+      "uid":0,
+      "gid":0,
+      "startTime":"0001-01-01T00:00:00Z",
+      "cwd":"/var/www/html",
+      "path":"/usr/sbin/apache2"
+    },
+    "containerID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8"
+  },
+  "event":{
+    "runtime":{
+      "runtimeName":"containerd",
+      "containerId":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8"
+    },
+    "k8s":{
+      "node":"node-02",
+      "namespace":"default",
+      "podName":"webapp-8b697d7f9-h9mx4",
+      "podLabels":{
+        "app":"webapp",
+        "pod-template-hash":"8b697d7f9"
+      },
+      "containerName":"ping-app",
+      "owner":{}
+    },
+    "timestamp":1745602981774765335,
+    "type":"normal"
+  },
+  "level":"error",
+  "message":"Unexpected system call: clock_nanosleep",
+  "msg":"Unexpected system call",
+  "time":"2025-04-25T17:43:01Z"
+}{
+  "BaseRuntimeMetadata":{
+    "alertName":"Unexpected system call",
+    "arguments":{
+      "syscall":"getpgid"
+    },
+    "infectedPID":23368,
+    "md5Hash":"4e79f11b07df8f72e945e0e3b3587177",
+    "sha1Hash":"b361a04dcb3086d0ecf960d3acaa776c62f03a55",
+    "severity":1,
+    "size":"730 kB",
+    "timestamp":"2025-04-25T17:43:01.800888956Z",
+    "trace":{}
+  },
+  "CloudMetadata":null,
+  "RuleID":"R0003",
+  "RuntimeK8sDetails":{
+    "clusterName":"honeycluster",
+    "containerName":"ping-app",
+    "hostNetwork":false,
+    "namespace":"default",
+    "containerID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8",
+    "podName":"webapp-8b697d7f9-h9mx4",
+    "podNamespace":"default",
+    "workloadName":"webapp",
+    "workloadNamespace":"default",
+    "workloadKind":"Deployment"
+  },
+  "RuntimeProcessDetails":{
+    "processTree":{
+      "pid":23368,
+      "cmdline":"apache2 -DFOREGROUND",
+      "comm":"apache2",
+      "ppid":22855,
+      "pcomm":"containerd-shim",
+      "uid":0,
+      "gid":0,
+      "startTime":"0001-01-01T00:00:00Z",
+      "cwd":"/var/www/html",
+      "path":"/usr/sbin/apache2"
+    },
+    "containerID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8"
+  },
+  "event":{
+    "runtime":{
+      "runtimeName":"containerd",
+      "containerId":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8"
+    },
+    "k8s":{
+      "node":"node-02",
+      "namespace":"default",
+      "podName":"webapp-8b697d7f9-h9mx4",
+      "podLabels":{
+        "app":"webapp",
+        "pod-template-hash":"8b697d7f9"
+      },
+      "containerName":"ping-app",
+      "owner":{}
+    },
+    "timestamp":1745602981800888956,
+    "type":"normal"
+  },
+  "level":"error",
+  "message":"Unexpected system call: getpgid",
+  "msg":"Unexpected system call",
+  "time":"2025-04-25T17:43:01Z"
+}{
+  "BaseRuntimeMetadata":{
+    "alertName":"Unexpected system call",
+    "arguments":{
+      "syscall":"kill"
+    },
+    "infectedPID":23368,
+    "md5Hash":"4e79f11b07df8f72e945e0e3b3587177",
+    "sha1Hash":"b361a04dcb3086d0ecf960d3acaa776c62f03a55",
+    "severity":1,
+    "size":"730 kB",
+    "timestamp":"2025-04-25T17:43:01.80241071Z",
+    "trace":{}
+  },
+  "CloudMetadata":null,
+  "RuleID":"R0003",
+  "RuntimeK8sDetails":{
+    "clusterName":"honeycluster",
+    "containerName":"ping-app",
+    "hostNetwork":false,
+    "namespace":"default",
+    "containerID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8",
+    "podName":"webapp-8b697d7f9-h9mx4",
+    "podNamespace":"default",
+    "workloadName":"webapp",
+    "workloadNamespace":"default",
+    "workloadKind":"Deployment"
+  },
+  "RuntimeProcessDetails":{
+    "processTree":{
+      "pid":23368,
+      "cmdline":"apache2 -DFOREGROUND",
+      "comm":"apache2",
+      "ppid":22855,
+      "pcomm":"containerd-shim",
+      "uid":0,
+      "gid":0,
+      "startTime":"0001-01-01T00:00:00Z",
+      "cwd":"/var/www/html",
+      "path":"/usr/sbin/apache2"
+    },
+    "containerID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8"
+  },
+  "event":{
+    "runtime":{
+      "runtimeName":"containerd",
+      "containerId":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8"
+    },
+    "k8s":{
+      "node":"node-02",
+      "namespace":"default",
+      "podName":"webapp-8b697d7f9-h9mx4",
+      "podLabels":{
+        "app":"webapp",
+        "pod-template-hash":"8b697d7f9"
+      },
+      "containerName":"ping-app",
+      "owner":{}
+    },
+    "timestamp":1745602981802410710,
+    "type":"normal"
+  },
+  "level":"error",
+  "message":"Unexpected system call: kill",
+  "msg":"Unexpected system call",
+  "time":"2025-04-25T17:43:01Z"
+}{
+  "BaseRuntimeMetadata":{
+    "alertName":"Unexpected system call",
+    "arguments":{
+      "syscall":"unlink"
+    },
+    "infectedPID":23368,
+    "md5Hash":"4e79f11b07df8f72e945e0e3b3587177",
+    "sha1Hash":"b361a04dcb3086d0ecf960d3acaa776c62f03a55",
+    "severity":1,
+    "size":"730 kB",
+    "timestamp":"2025-04-25T17:43:01.803887155Z",
+    "trace":{}
+  },
+  "CloudMetadata":null,
+  "RuleID":"R0003",
+  "RuntimeK8sDetails":{
+    "clusterName":"honeycluster",
+    "containerName":"ping-app",
+    "hostNetwork":false,
+    "namespace":"default",
+    "containerID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8",
+    "podName":"webapp-8b697d7f9-h9mx4",
+    "podNamespace":"default",
+    "workloadName":"webapp",
+    "workloadNamespace":"default",
+    "workloadKind":"Deployment"
+  },
+  "RuntimeProcessDetails":{
+    "processTree":{
+      "pid":23368,
+      "cmdline":"apache2 -DFOREGROUND",
+      "comm":"apache2",
+      "ppid":22855,
+      "pcomm":"containerd-shim",
+      "uid":0,
+      "gid":0,
+      "startTime":"0001-01-01T00:00:00Z",
+      "cwd":"/var/www/html",
+      "path":"/usr/sbin/apache2"
+    },
+    "containerID":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8"
+  },
+  "event":{
+    "runtime":{
+      "runtimeName":"containerd",
+      "containerId":"d4d78869d6b20066565d10c39fa37d1c6d3d5d83161b4d7b3d75783d53653ae8"
+    },
+    "k8s":{
+      "node":"node-02",
+      "namespace":"default",
+      "podName":"webapp-8b697d7f9-h9mx4",
+      "podLabels":{
+        "app":"webapp",
+        "pod-template-hash":"8b697d7f9"
+      },
+      "containerName":"ping-app",
+      "owner":{}
+    },
+    "timestamp":1745602981803887155,
+    "type":"normal"
+  },
+  "level":"error",
+  "message":"Unexpected system call: unlink",
+  "msg":"Unexpected system call",
+  "time":"2025-04-25T17:43:01Z"
+}
+```
+
+
+Discuss that those CAPs and SYSCALLS are all related to the restart
+
+TODO: trace out the restart to proof OR make this a challenge for the audience to do
+
+
+## 8) more benign traffic after restart
+
+In case it hangs, kill the port-fwd and restart it:
+```sh
+kill -9 $(sudo lsof -t -i :8080)
+kubectl port-forward svc/webapp 8080:80 2>&1 >/dev/null &
+while true; do curl localhost:8080/ping.php?ip=172.16.0.2; sleep 10; done
+```
