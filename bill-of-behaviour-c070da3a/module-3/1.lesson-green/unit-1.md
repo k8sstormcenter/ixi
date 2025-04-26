@@ -140,15 +140,19 @@ kubectl get applicationProfile replicaset-$rs  -o yaml > ~/originalappprofile.ya
 ```
 
 now edit that profile (so it keeps it name), but use the content of the one from Module 1!!!
+
 ```sh   
 echo $rs
-envsubst < /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_applicationprofile.yaml > /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob.yaml
+envsubst < /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_applicationprofile_restart.yaml > /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_restart.yaml
 ```
 
 `patch` the ping-profile:
+```sh
+kubectl delete applicationprofile replicaset-$rs
+```
 
 ```sh
-kubectl apply -f /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob.yaml
+kubectl apply -f /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_restart.yaml
 ```
 Make sure you didnt wake ~~the dragon~~ kubescape
 ```
@@ -191,6 +195,41 @@ Open a third terminal and:
 kubectl logs -n honey -l app=node-agent --tail=-1 -f
 ```
 back in another terminal:
+
+```
+export pod=$(kubectl get pod -n default -o jsonpath='{.items[0].metadata.name}')
+kubectl get pod $pod
+```
+```sh
+kubectl delete pod $pod
+```
+switch to the tab of the logs
+
+again it is rerecording the profile again
+
+```json
+{"level":"info","ts":"2025-04-25T20:24:06Z","msg":"start monitor on container","container ID":"6f95b220e4e1b06b391c98409682064cf7e9115286792f139c6ca52221a23b85","k8s workload":"default/webapp-8b697d7f9-hxz4v/ping-app","ContainerImageDigest":"sha256:efbbeae81bb8af21288cdda8f0f3de900b73dad19b380937b7374965ee41957f","ContainerImageName":"ghcr.io/k8sstormcenter/webapp:latest"}
+{"level":"info","ts":"2025-04-25T20:24:07Z","msg":"stop monitor on container - container has terminated","container ID":"c0cbad967bf756dce1a6716bd39b20250b218a1dfee594c024ab883ad40ab576","k8s workload":"default/webapp-8b697d7f9-wr5s8/ping-app"}
+```
+
+what we see is that we didnt do a `rollout restart`, but a `pod delete`
+
+```json
+{"BaseRuntimeMetadata":{"alertName":"Unexpected system call","arguments":{"syscall":"gettid"},"infectedPID":4183,"md5Hash":"4e79f11b07df8f72e945e0e3b3587177","sha1Hash":"b361a04dcb3086d0ecf960d3acaa776c62f03a55","severity":1,"size":"730 kB","timestamp":"2025-04-25T20:21:33.310968529Z","trace":{}},"CloudMetadata":null,"RuleID":"R0003","RuntimeK8sDetails":{"clusterName":"honeycluster","containerName":"ping-app","hostNetwork":false,"namespace":"default","containerID":"c0cbad967bf756dce1a6716bd39b20250b218a1dfee594c024ab883ad40ab576","podName":"webapp-8b697d7f9-wr5s8","podNamespace":"default","workloadName":"webapp","workloadNamespace":"default","workloadKind":"Deployment"},"RuntimeProcessDetails":{"processTree":{"pid":4183,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":3927,"pcomm":"containerd-shim","uid":0,"gid":0,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2"},"containerID":"c0cbad967bf756dce1a6716bd39b20250b218a1dfee594c024ab883ad40ab576"},"event":{"runtime":{"runtimeName":"containerd","containerId":"c0cbad967bf756dce1a6716bd39b20250b218a1dfee594c024ab883ad40ab576"},"k8s":{"node":"node-01","namespace":"default","podName":"webapp-8b697d7f9-wr5s8","podLabels":{"app":"webapp","pod-template-hash":"8b697d7f9"},"containerName":"ping-app","owner":{}},"timestamp":1745612493310968529,"type":"normal"},"level":"error","message":"Unexpected system call: gettid","msg":"Unexpected system call","time":"2025-04-25T20:21:33Z"}
+{"BaseRuntimeMetadata":{"alertName":"Unexpected system call","arguments":{"syscall":"tkill"},"infectedPID":4183,"md5Hash":"4e79f11b07df8f72e945e0e3b3587177","sha1Hash":"b361a04dcb3086d0ecf960d3acaa776c62f03a55","severity":1,"size":"730 kB","timestamp":"2025-04-25T20:21:33.313413767Z","trace":{}},"CloudMetadata":null,"RuleID":"R0003","RuntimeK8sDetails":{"clusterName":"honeycluster","containerName":"ping-app","hostNetwork":false,"namespace":"default","containerID":"c0cbad967bf756dce1a6716bd39b20250b218a1dfee594c024ab883ad40ab576","podName":"webapp-8b697d7f9-wr5s8","podNamespace":"default","workloadName":"webapp","workloadNamespace":"default","workloadKind":"Deployment"},"RuntimeProcessDetails":{"processTree":{"pid":4183,"cmdline":"apache2 -DFOREGROUND","comm":"apache2","ppid":3927,"pcomm":"containerd-shim","uid":0,"gid":0,"startTime":"0001-01-01T00:00:00Z","cwd":"/var/www/html","path":"/usr/sbin/apache2"},"containerID":"c0cbad967bf756dce1a6716bd39b20250b218a1dfee594c024ab883ad40ab576"},"event":{"runtime":{"runtimeName":"containerd","containerId":"c0cbad967bf756dce1a6716bd39b20250b218a1dfee594c024ab883ad40ab576"},"k8s":{"node":"node-01","namespace":"default","podName":"webapp-8b697d7f9-wr5s8","podLabels":{"app":"webapp","pod-template-hash":"8b697d7f9"},"containerName":"ping-app","owner":{}},"timestamp":1745612493313413767,"type":"normal"},"level":"error","message":"Unexpected system call: tkill","msg":"Unexpected system call","time":"2025-04-25T20:21:33Z"}
+```
+
+But, we again these are just events related to the `delete` action.
+
+So: a very clear question for kubescape is: how to make it `accept such an externally supplied profile`.
+We dont want to constantly be patching this file
+
+Will ask the maintainers next week Tuesday
+
+
+
+### AFTER HERE IS DEBUG OUTPUT TO PROVE DETAILS
+
 ```
 kubectl rollout restart deployment webapp
 ```
@@ -753,13 +792,14 @@ kubectl describe applicationprofile replicaset-$rs
 ```sh
 kubectl get applicationProfile replicaset-$rs  -o yaml > ~/secondappprofile.yaml
 ```
+```sh   
+echo $rs
+envsubst < /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_applicationprofile.yaml > /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob.yaml
+```
 
 now edit that profile (so it keeps it name), but use the content of the one from Module 1 that
 `includes the restart` !!!
-```sh   
-echo $rs
-envsubst < /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_applicationprofile_restart.yaml > /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_restart.yaml
-```
+
 
 `patch` the ping-profile:
 

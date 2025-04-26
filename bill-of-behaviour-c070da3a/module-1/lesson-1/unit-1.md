@@ -18,8 +18,8 @@ For this, we need to:
   
 
 
-## 0 Clone repository for this lab 
-Make sure, you have this lab open in chrome. Safari doesnt work. 
+## Familiarize yourself with this lab and clone the repository
+Make sure, you have this lab open in Chrome. Safari doesnt work. 
 
 Please hover over the bottom right corner of the below box, when the `Copy` symbol appears, click it and `Paste` it into the right hand `terminal` (you need to activate the playground first). In Windows, you need to right click or configure what keybindings your browser is listening to.
 
@@ -48,7 +48,17 @@ cd honeycluster
 git checkout 152-implement-bill-of-behaviour-demo-lab 
 make storage kubescape-bob-kind
 ```
-
+::simple-task
+---
+:tasks: tasks
+:name: git_clone_k8s
+---
+#active
+Waiting for you to clone the repo
+#completed
+Congrats! 
+::
+---
 ```bash
 kubectl get pods -n honey -l app.kubernetes.io/instance=kubescape
 ```
@@ -83,20 +93,20 @@ make cluster-up
 make kubescape-bob-kind
 ``` -->
 
-<!-- 
-
-
 ::simple-task
 ---
 :tasks: tasks
-:name: git_clone
+:name: verify_kubescape_health
 ---
 #active
-Waiting for you to clone the repo
+Kubescape is being deployed..
+
 #completed
-Congrats! 
+Kubescape is running 
 ::
- -->
+---
+
+
 
 ## 1 Deploy
 Using a well-known `demo`** app, we deploy a ping utility called `webapp` that has
@@ -114,7 +124,7 @@ chmod +x setup.sh
 ```
 
 
-<!-- 
+
 ::simple-task
 ---
 :tasks: tasks
@@ -126,7 +136,8 @@ Webapp is being deployed..
 #completed
 Webapp is running 
 ::
- -->
+---
+
 If you prefer to manually checkout your app is up:
 ```sh
 kubectl get pods -l app=webapp -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'

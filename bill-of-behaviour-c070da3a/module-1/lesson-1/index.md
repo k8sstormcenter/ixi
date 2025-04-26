@@ -16,6 +16,48 @@ cover: __static__/cover.png
 
 playground: 
   name: k8s-omni
+  machines:
+   - name:  dev-machine
+   - name:  cplane-01
+   - name:  node-01
+   - name:  node-02
+  tabs:
+  - machine: dev-machine
+  
+
+
+tasks:
+  git_clone_k8s:
+    name: git_clone_k8s
+    machine: dev-machine
+    run: |
+      [[  -d /home/laborant/honeycluster/.git   ]]
+
+
+  verify_kubescape_health:
+    machine: node-01
+    timeout_seconds: 30
+    run: |
+      # Check node status
+      NODE_STATUS=$(kubectl get nodes -o jsonpath='{.items[*].status.conditions[?(@.type=="Ready")].status}')
+
+      # Check pod status
+      POD_STATUS=$(kubectl get pods -A -o jsonpath='{.items[*].status.phase}' | tr ' ' '\n' | sort | uniq)
+      KUBESCAPE_STATUS=$(kubectl get pods -n honey -l app.kubernetes.io/instance=kubescape -o jsonpath='{.items[*].status.phase}' | tr ' ' '\n' | sort | uniq)
+
+      if [[ "$NODE_STATUS" == "True True True" ]] && \
+         [[ "$POD_STATUS" == "Running" ]] && \
+         [[ "$KUBESCAPE_STATUS" == "Running" ]] ; then
+        echo "Installation of kubescape verified successfully!"
+        exit 0
+      else
+        exit 1
+      fi
+
+  webapp:
+    machine: dev-machine
+    run: |
+      [[ "$(kubectl get pods -l app=webapp -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}')" == "True"  ]]
 ---
 
 tasks:
