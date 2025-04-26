@@ -41,6 +41,20 @@ This means, the writing on the left here can change in real time. Since you have
 Constanze, and should something happen that you have issue with, please, ping her in your usual communication channel (`icmp` may not be the right one 🤣)
 ::
 
+::simple-task
+---
+:tasks: tasks
+:name: trigger_event
+---
+#active
+You are reading
+
+#completed
+You are now looking at this example task as finished
+::
+---
+
+
 
 ```bash
 git clone https://github.com/k8sstormcenter/honeycluster.git
@@ -105,7 +119,6 @@ Kubescape is being deployed..
 Kubescape is running 
 ::
 ---
-
 
 
 ## 1 Deploy

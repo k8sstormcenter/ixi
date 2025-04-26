@@ -16,3 +16,16 @@ In this first part on the `customer` side, we need to verify and unpack the BoB
 ### Part 1 Verfication
 
 Please here all the things that BoB needs to do analogously to SBOM for client side to verify it
+
+::simple-task
+---
+:tasks: tasks
+:name: trigger_event
+---
+#active
+You are reading
+
+#completed
+You are now looking at this example task as finished in Module 2 Lesson 2, means it loaded correctly
+::
+---

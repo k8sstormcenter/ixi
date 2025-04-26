@@ -16,6 +16,20 @@ For this, we need to:
 * Profile the benign behaviour
 * Export the profile
 
+::simple-task
+---
+:tasks: tasks
+:name: trigger_event
+---
+#active
+You are reading
+
+#completed
+You are now looking at this example task as finished in Module 4 , means it loaded correctly
+::
+---
+
+
 ## 0 Clone repo
 Make sure, you have this lab open in chrome. Safari doesnt work. 
 

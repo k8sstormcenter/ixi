@@ -15,6 +15,19 @@ name: oci-build-tag
 No well-established API should change, else people are not going to use it.
 
 dear co-autor P: is C correct in assuming you wanted to build this part?
+::simple-task
+---
+:tasks: tasks
+:name: trigger_event
+---
+#active
+You are reading
+
+#completed
+You are now looking at this example task as finished in Module 2, means it loaded correctly
+::
+---
+
 
 ## 1) Predicate Format
 Sketch: - be'ware the stream of consciousness writing style

@@ -16,6 +16,18 @@ We, ll cover the following
 * Follow the 2-step installation process
 * Watch it for the two types of anomalies
   
+::simple-task
+---
+:tasks: tasks
+:name: trigger_event
+---
+#active
+You are reading
+
+#completed
+You are now looking at this example task as finished in Module 3 Lesson 1, means it loaded correctly
+::
+---
 
 ## 0 Clone repo
 Again, lets clone the same repo, this is a fresh playground
