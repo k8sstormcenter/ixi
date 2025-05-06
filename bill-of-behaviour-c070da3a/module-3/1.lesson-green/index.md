@@ -18,8 +18,6 @@ playground:
 
   
 
-
-
 tasks:
 
   trigger_event:
