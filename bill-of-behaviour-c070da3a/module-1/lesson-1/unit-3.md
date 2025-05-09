@@ -90,7 +90,20 @@ Glad you asked :)
 
 It does ... somehwat . Before we look at various sidecars and multi-container-pods. Lets stay with this simply ping `webapp` that does very little, and compare its profiles across various clusters and archs:
 
+::tabbed
+---
+tabs:
+  - name: 
+    title: Tab 1
+  - name: tab2
+    title: Tab 2
+---
+#tab1
+...markdown...
 
+#tab2
+...markdown...
+::
 
 
 
