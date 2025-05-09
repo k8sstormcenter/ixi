@@ -84,6 +84,15 @@ Spec:
 ```
 
 
+## Is this relevant, does this translate across different cluster types?
+
+Glad you asked :)
+
+It does ... somehwat . Before we look at various sidecars and multi-container-pods. Lets stay with this simply ping `webapp` that does very little, and compare its profiles across various clusters and archs:
+
+
+
+
 
 
 ## CUSTOMER SIDE SKETCH  (this will be moved into the Module 3)
