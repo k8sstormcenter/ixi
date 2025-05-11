@@ -15,3 +15,10 @@ for ((i = 0; i < ${#files[@]} - 1; i++)); do
     diff "${files[i]%.yaml}.json" "${files[j]%.yaml}.json"
   done
 done
+
+# Count the syscalls
+yq '.spec.containers[].syscalls | length' file1.yaml
+yq '.spec.containers[].syscalls | length' file2.yaml
+yq '.spec.containers[].syscalls | length' file3.yaml
+yq '.spec.containers[].syscalls | length' file4.yaml
+yq '.spec.containers[].syscalls | length' file5.yaml

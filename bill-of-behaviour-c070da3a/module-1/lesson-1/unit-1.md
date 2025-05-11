@@ -211,11 +211,12 @@ kind: warning
 ---
 
 
-__Optional__: you could expose this app on port `58080` and use a new brower tab (see setup.sh)
-```
-#sudo socat TCP-LISTEN:58080,bind=172.16.0.2,reuseaddr,fork TCP:127.0.0.1:58080&
-```
+__WIP__: We understand that this `webapp` is extremely simplistic and in Module 4 will show how we 
+would approach multi-container pods, such as when `sidecars` are injected.
+
+There we'll discuss how those deployments can be handled and if everything is `additive`
+
+(Thanks Ben for pointing this out)
 ::
 
 
-TODO: Implement the whole thing with a pod consisting of more than one container!

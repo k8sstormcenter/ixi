@@ -14,7 +14,6 @@ name: oci-build-tag
 
 No well-established API should change, else people are not going to use it.
 
-dear co-autor P: is C correct in assuming you wanted to build this part?
 ::simple-task
 ---
 :tasks: tasks
@@ -138,6 +137,9 @@ TODO: This must be produced this for each `architecture`,  file_access directly 
 ## 2) Building the artefact with the BoB included
 
 
+Lets take our appProfile for 2 architectures (arm64 and x86_64)
+
+
 Need to reclone, cause this is a new environment with docker/buildx , not k0s
 
 ```git
@@ -147,14 +149,14 @@ git checkout 152-implement-bill-of-behaviour-demo-lab
 cd traces/kubescape-verify/attacks/webapp/
 ```
 Sketch of commands
-
+<!-- 
 ```sh
 docker buildx create --use --name=buildkit-container --driver=docker-container
 docker buildx build --bob=true -t registry.iximiuz.com/webapp:latest --push .
 ```
 
 
-<!-- 
+
 So, we have our `ApplicationProfile` from the last section;
 
 ```yaml
