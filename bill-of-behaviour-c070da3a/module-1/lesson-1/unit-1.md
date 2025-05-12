@@ -59,7 +59,7 @@ You are now looking at this example task as finished
 ```bash
 git clone https://github.com/k8sstormcenter/honeycluster.git
 cd honeycluster
-git checkout 152-implement-bill-of-behaviour-demo-lab 
+git checkout 162-write-bob-testscript-for-anyone-to-contribute-a-bob-for-the-pingapps 
 make storage kubescape-bob-kind
 ```
 ::simple-task
