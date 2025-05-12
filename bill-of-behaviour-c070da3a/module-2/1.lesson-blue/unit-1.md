@@ -174,3 +174,33 @@ For example; for the following scenario:
 it is not currently clear to me, if this fails open or fails closed. Given, that port-forwarding/api-gw/ingress will be vastly
 different, the `endpoint` section should maybe be discovered. But, again, be added in. It is unlikely we can pre-determine it.
 
+
+
+### The Test
+Lets start simple and add to our deployment.yaml a second deployment that executes our curl
+given that the port is different, this might already trigger an alert.
+
+```yaml
+==> deployment.yaml <==
+...
+        app: testapp
+        kubescape.io/ignore: "true"
+    spec:
+      containers:
+      - name: curl-container
+        image: curlimages/curl:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          for i in $(seq 1 20); do
+            curl webapp.default.svc.cluster.local:8080/ping.php?ip=172.16.0.2
+            echo
+          done
+...
+```
+## Result
+
+We now have
+- bob.yaml # the parametrized ApplicationProfile
+- bob.values # the Parameters
+- deployment.yaml # sample Deployment incl a LoadTest
