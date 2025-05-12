@@ -48,13 +48,13 @@ TODO: This must be produced this for each `architecture`,  file_access directly 
 ```json
 {
   "version": "1.0",
-  "image_id": "docker.io/amitschendel/ping-app@sha256:99fe0f297bbaeca1896219486de8d777fa46bd5b0cabe8488de77405149c524d",
-  "image_tag": "docker.io/amitschendel/ping-app:latest",
+  "imageID": "ghcr.io/k8sstormcenter/webapp@sha256:e323014ec9befb76bc551f8cc3bf158120150e2e277bae11844c2da6c56c0a2b",
+  "imageTag": "ghcr.io/k8sstormcenter/webapp@sha256:e323014ec9befb76bc551f8cc3bf158120150e2e277bae11844c2da6c56c0a2b",
   "architectures":  "amd64",
   "executables": [
     {
       "path": "/bin/ping",
-      "args": ["-c", "4", "placeholder maybe CIDR regex"]
+      "args": ["-c", "4", "placeholder maybe CIDR regex"]#EXAMPLE OF DEFAULT
     },
     {
       "path": "/bin/sh",
@@ -67,11 +67,11 @@ TODO: This must be produced this for each `architecture`,  file_access directly 
       "flags": ["O_RDONLY"]
     },
     {
-      "path": "/lib/x86_64-linux-gnu/libc-2.31.so", TODO: think if there are cases when dynamic linking would be using something non-deterministic , thinking how podman or singularity could be doing things differently , are those relevant?
-      "flags": ["O_CLOEXEC", "O_RDONLY"]
+      "path": "/lib/x86_64-linux-gnu/libc-2.31.so", 
+      "flags": ["O_CLOEXEC", "O_RDONLY"] #THE FLAGS ARE/CAN BE ARCH SPECIFIC 
     }
   ],
-  "system_calls": [
+  "system_calls": [ #ARE DEF ARCH SPECIFIC, CAN DEPEND ON KERNEL VERSION
     "accept4",
     "access",
     "arch_prctl",
