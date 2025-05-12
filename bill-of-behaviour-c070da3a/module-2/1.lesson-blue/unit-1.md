@@ -29,322 +29,148 @@ You are now looking at this example task as finished in Module 2, means it loade
 
 
 ## 1) Predicate Format
-Sketch: - be'ware the stream of consciousness writing style
+
 
 
 Highlevel:
 ```yaml
+Header: 
 Executables: Paths and arguments of executables that are expected to run.
 Network Connections: Expected network connections (IP addresses, DNS names, ports, protocols).
 File Access: Expected file access patterns (paths, read/write). 
 System Calls: Expected system calls.
-Capabilities: Expected Linux capabilities. #TBC differs accross containerruntimes -> TODO recapture the profile, check the image sha
+Capabilities: Expected Linux capabilities. 
 Image information: Image ID, Image Tag.
 ```
 
-Detailed concrete example: 
-
-TODO: This must be produced this for each `architecture`,  file_access directly depends on `arch`, but depending how exotic the `arch` more may be different. `execs` depend on the flavour kubernetes
-```json
-{
-  "version": "1.0",
-  "imageID": "ghcr.io/k8sstormcenter/webapp@sha256:e323014ec9befb76bc551f8cc3bf158120150e2e277bae11844c2da6c56c0a2b",
-  "imageTag": "ghcr.io/k8sstormcenter/webapp@sha256:e323014ec9befb76bc551f8cc3bf158120150e2e277bae11844c2da6c56c0a2b",
-  "architectures":  "amd64",
-  "executables": [
-    {
-      "path": "/bin/ping",
-      "args": ["-c", "4", "placeholder maybe CIDR regex"]#EXAMPLE OF DEFAULT
-    },
-    {
-      "path": "/bin/sh",
-      "args": ["-c", "ping placeholder"] TODO: test or dig through the code if a regex works here, else we need to remove the args, or ask vendors to remove such non-generic pieces themselves. Probably good to let vendors commit to as much as possible
-    }
-  ],
-  "file_access": [
-    {
-      "path": "/var/www/html/ping.php",
-      "flags": ["O_RDONLY"]
-    },
-    {
-      "path": "/lib/x86_64-linux-gnu/libc-2.31.so", 
-      "flags": ["O_CLOEXEC", "O_RDONLY"] #THE FLAGS ARE/CAN BE ARCH SPECIFIC 
-    }
-  ],
-  "system_calls": [ #ARE DEF ARCH SPECIFIC, CAN DEPEND ON KERNEL VERSION
-    "accept4",
-    "access",
-    "arch_prctl",
-    "brk",
-    "capget",
-    "capset",
-    "chdir",
-    "clone",
-    "close"
-  ],
-  "capabilities": [
-    "NET_RAW",
-    "SETUID"
-  ],
-  "endpoints": [
-    {
-      "direction": "inbound",
-      "endpoint": ":<PORT>/ping.php",
-      "headers": {
-        "Host": "probably wont be generic"
-      },
-      "internal": false,
-      "methods": [
-        "GET"
-      ]
-    },
-    {
-      "direction": "outbound",
-      "endpoint": "k8sstormcenter.com:443",
-      "protocol": "tcp",
-      "internal": false,
-      "methods": [
-        "LETS RECORD AN EXAMPLE"
-      ]
-    },
-    {
-      "direction": "outbound",
-      "endpoint": "k8sstormcenter.com",
-      "protocol": "udp",
-      "internal": false,
-      "methods": [
-        "DNS_QUERY"
-      ],
-      "dns": {
-        "query_type": "A",
-        "query_name": "k8sstormcenter.com",
-        "response": {
-          "answer": [
-            {
-              "name": "k8sstormcenter.com",
-              "type": "A",
-              "ttl": 300,
-              "data": "192.168.1.100" # DO WE WANT TO commit to the answer, or leave it as optional if a vendor is super sure they have static IPs. the DNS part could be very valuable in detecting malicious behaviour, probably good to have it as OPTIONAL
-            }
-          ]
-        }
-      }
-    }
-  ]
-}
+Header (in the assumption we can use kubescape directly):
+```yaml
+apiVersion: spdx.softwarecomposition.kubescape.io/v1beta1
+kind: ApplicationProfile
+metadata:
+  annotations:
+    kubescape.io/completion: complete
+    kubescape.io/instance-id: apiVersion-apps/v1/namespace-$values.namespace/kind-$values.camelinstancekind/name-$values.name-$values.templatehash
+    kubescape.io/status: completed
+    kubescape.io/wlid: wlid://cluster-$values.clustername/namespace-$values.namespace/$values.workloadkind-$values.name
+  labels:
+    kubescape.io/workload-api-group: apps
+    kubescape.io/workload-api-version: v1
+    kubescape.io/workload-kind: $values.camelworkloadkind
+    kubescape.io/workload-name: $values.name
+    kubescape.io/workload-namespace: $values.namespace
+  name: $values.instancekind-$values.name-$values.templatehash
+  namespace: $values.namespace
+  resourceVersion: "1"
+```
+Ideal Header
+```
+apiVersion: 
+kind: BillOfBehavior
+metadata:
+  annotations:
+  labels:
+  name:
+  namespace:
 ```
 
-## 2) Building the artefact with the BoB included
 
 
-Lets take our appProfile for 2 architectures (arm64 and x86_64)
+## 2) Building the BoB including a test
 
 
-Need to reclone, cause this is a new environment with docker/buildx , not k0s
+Lets take our ApplicationProfile and create a very simply bob
+
+
 
 ```git
 git clone https://github.com/k8sstormcenter/honeycluster.git
 cd honeycluster
 git checkout 162-write-bob-testscript-for-anyone-to-contribute-a-bob-for-the-pingapps
 cd traces/kubescape-verify/attacks/bob
-```
-Sketch of commands
-
-```
-sudo apt install python3-yaml
+ls
+cat bob.values
 ```
 
+First, as a vendor, I need to choose what will be substitutable by a customer and what tests I can give to the customer.
 
-<!-- 
-```sh
-docker buildx create --use --name=buildkit-container --driver=docker-container
-docker buildx build --bob=true -t registry.iximiuz.com/webapp:latest --push .
+The content of the `bob` is:
+- bob.yaml
+- bob.values
+- bob.test
+
+### Here and Back Again
+A bob's tale:
+
+
+```bash
+sudo apt install python3-yaml  
+```
+```bash
+python3 bob.py 
+```
+
+Well, rather minimalistic, but a sketch how to extract the `values` and substitute them back in:
+
+```yaml 
+==> bob_generated.values <==
+namespace=default
+name=webapp
+clustername=honeycluster
+templatehash=d87cdd796
+workloadkind=deployment
+camelworkloadkind=Deployment
+instancekind=replicaset
+camelinstancekind=ApplicationProfile
+
+==> bob_generated.yaml <==
+apiVersion: spdx.softwarecomposition.kubescape.io/v1beta1
+kind: ApplicationProfile
+metadata:
+  annotations:
+    kubescape.io/completion: complete
+    kubescape.io/instance-id: apiVersion-apps/v1/namespace-$values.namespace/kind-$values.camelinstancekind/name-$values.name-$values.templatehash
+    kubescape.io/resource-size: '245'
+    kubescape.io/status: completed
+    kubescape.io/wlid: wlid://cluster-$values.clustername/namespace-$values.namespace/$values.workloadkind-$values.name
+  creationTimestamp: '2025-05-12T12:45:42Z'
+
+==> processed_bob_generated.yaml <==
+apiVersion: spdx.softwarecomposition.kubescape.io/v1beta1
+kind: ApplicationProfile
+metadata:
+  annotations:
+    kubescape.io/completion: complete
+    kubescape.io/instance-id: apiVersion-apps/v1/namespace-default/kind-ApplicationProfile/name-webapp-d87cdd796
+    kubescape.io/resource-size: '245'
+    kubescape.io/status: completed
+    kubescape.io/wlid: wlid://cluster-honeycluster/namespace-default/deployment-webapp
+  creationTimestamp: '2025-05-12T12:45:42Z'
 ```
 
 
 
-So, we have our `ApplicationProfile` from the last section;
 
+Now, we have simply substituted out the CRD header so we can `transfer` it .
+I suggest, we have `variables` and `defaults` with a well-defined precedence.
+
+Ideally, on the other side (the customer side), we will have a composable way to unionize the runtimeAspects (making 
+multiple BoBs `additive` ). So, I suspect the `bobctl` will need to be able to merge bob.yaml files.
+
+
+Later work: we need to create functions to replace sections. I see mostly networking being cumbersome.
+For example; for the following scenario:
 ```yaml
-Name:         pod-ping-app
-Namespace:    default
-Labels:       kubescape.io/workload-api-version=v1
-              kubescape.io/workload-kind=Pod
-              kubescape.io/workload-name=ping-app
-              kubescape.io/workload-namespace=default
-              kubescape.io/workload-resource-version=1966
-Annotations:  kubescape.io/completion: partial
-              kubescape.io/instance-id: apiVersion-v1/namespace-default/kind-Pod/name-ping-app
-              kubescape.io/resource-size: 9
-              kubescape.io/status: completed
-              kubescape.io/wlid: wlid://cluster-honeycluster/namespace-default/pod-ping-app
-API Version:  spdx.softwarecomposition.kubescape.io/v1beta1
-Kind:         ApplicationProfile
-Metadata:
-  Creation Timestamp:  2025-04-15T19:47:13Z
-  Resource Version:    4
-  UID:                 08396cda-4519-48ce-9c7c-9d530a19123a
-Spec:
-  Architectures:
-    amd64
-  Containers:
-    Capabilities:
-      NET_RAW
-      SETUID
-    Endpoints:
-      Direction:  inbound
-      Endpoint:   :32132/ping.php
-      Headers:
+    endpoints:
+    - direction: inbound
+      endpoint: :8080/ping.php
+      headers:
         Host:
-          172.16.0.2:32132
-      Internal:  false
-      Methods:
-        GET
-    Execs:
-      Args:
-        /bin/sh
-        -c
-        ping -c 4 172.16.0.2
-      Path:  /bin/sh
-      Args:
-        /bin/ping
-        -c
-        4
-        172.16.0.2
-      Path:     /bin/ping
-    Image ID:   docker.io/amitschendel/ping-app@sha256:99fe0f297bbaeca1896219486de8d777fa46bd5b0cabe8488de77405149c524d
-    Image Tag:  docker.io/amitschendel/ping-app:latest
-    Name:       ping-app
-    Opens:
-      Flags:
-        O_CLOEXEC
-        O_RDONLY
-      Path:  /usr/lib/x86_64-linux-gnu/libunistring.so.2.1.0
-      Flags:
-        O_RDONLY
-      Path:  /var/www/html/ping.php
-      Flags:
-        O_CLOEXEC
-        O_RDONLY
-      Path:  /etc/ld.so.cache
-      Flags:
-        O_CLOEXEC
-        O_RDONLY
-      Path:  /lib/x86_64-linux-gnu/libc-2.31.so
-      Flags:
-        O_CLOEXEC
-        O_RDONLY
-      Path:  /lib/x86_64-linux-gnu/libcap.so.2.44
-      Flags:
-        O_CLOEXEC
-        O_RDONLY
-      Path:  /usr/lib/x86_64-linux-gnu/libidn2.so.0.3.7
-      Flags:
-        O_CLOEXEC
-        O_RDONLY
-      Path:  /lib/x86_64-linux-gnu/libresolv-2.31.so
-    Rule Policies:
-      R0001:
-      R0002:
-      R0003:
-      R0004:
-      R0005:
-      R0006:
-      R0007:
-      R0008:
-      R0009:
-      R0010:
-      R0011:
-      R1000:
-      R1001:
-      R1002:
-      R1003:
-      R1004:
-      R1005:
-      R1006:
-      R1007:
-      R1008:
-      R1009:
-      R1010:
-      R1011:
-      R1012:
-      R1015:
-      R1030:
-    Seccomp Profile:
-      Spec:
-        Default Action:  
-    Syscalls:
-      accept4
-      access
-      arch_prctl
-      brk
-      capget
-      capset
-      chdir
-      clone
-      close
-      connect
-      dup2
-      execve
-      exit_group
-      fcntl
-      fstat
-      getcwd
-      getegid
-      geteuid
-      getgid
-      getpid
-      getppid
-      getrandom
-      getsockname
-      getsockopt
-      getuid
-      ioctl
-      lstat
-      mmap
-      mprotect
-      munmap
-      openat
-      pipe2
-      poll
-      prctl
-      prlimit64
-      read
-      recvmsg
-      rt_sigaction
-      rt_sigprocmask
-      rt_sigreturn
-      select
-      sendto
-      setitimer
-      setsockopt
-      setuid
-      shutdown
-      socket
-      stat
-      times
-      vfork
-      wait4
-      write
-      writev
-Status:
-Events:  <none>
+        - localhost:8080
+      internal: false
+      methods:
+      - GET
 ```
+it is not currently clear to me, if this fails open or fails closed. Given, that port-forwarding/api-gw/ingress will be vastly
+different, the `endpoint` section should maybe be discovered. But, again, be added in. It is unlikely we can pre-determine it.
 
-
-
-Lets test building our artefact:
-
-```git
-git clone https://github.com/k8sstormcenter/honeycluster.git
-cd honeycluster
-git checkout 152-implement-bill-of-behaviour-demo-lab 
-cd traces/kubescape-verify/attacks/webapp/
-```
-
-```sh
-docker buildx create --use --name=buildkit-container --driver=docker-container
-docker buildx build --bob=true -t registry.iximiuz.com/webapp:latest --push .
-```
-
- -->
