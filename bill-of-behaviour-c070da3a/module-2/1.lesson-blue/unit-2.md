@@ -48,6 +48,14 @@ The bobctl CLI commands for managing BoB artifacts are:
 
 The OCI artifacts produced with `bobctl push artifact` have the following custom media types:
 
+::remark-box
+---
+kind: warning
+---
+__Question__: C to P: can we have a yaml or does it have to be json?
+::
+
+
 - artifact media type `application/vnd.oci.image.manifest.v1+json`
 - config media type `application/vnd.k8sstormcenter.bob.config.v1+json`
 - content media type `application/vnd.k8sstormcenter.bob.content.v1.tar+gzip`
