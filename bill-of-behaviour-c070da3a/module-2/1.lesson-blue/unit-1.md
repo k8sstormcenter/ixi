@@ -145,10 +145,16 @@ Need to reclone, cause this is a new environment with docker/buildx , not k0s
 ```git
 git clone https://github.com/k8sstormcenter/honeycluster.git
 cd honeycluster
-git checkout 152-implement-bill-of-behaviour-demo-lab 
-cd traces/kubescape-verify/attacks/webapp/
+git checkout 162-write-bob-testscript-for-anyone-to-contribute-a-bob-for-the-pingapps
+cd traces/kubescape-verify/attacks/bob
 ```
 Sketch of commands
+
+```
+sudo apt install python3-yaml
+```
+
+
 <!-- 
 ```sh
 docker buildx create --use --name=buildkit-container --driver=docker-container
