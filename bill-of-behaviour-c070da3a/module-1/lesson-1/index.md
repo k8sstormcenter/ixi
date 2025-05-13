@@ -65,23 +65,10 @@ tasks:
     machine: dev-machine
     run: |
       [[ "$(kubectl get pods -l app=webapp -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}')" == "True"  ]]
----
 
-tasks:
-  git_clone:
-    run: |
-      [[  -d /home/laborant/honeycluster/.git   ]]
-
-  make:
-    run: |
-      [[ $(kubectl get pods -n honey --no-headers 2>/dev/null | wc -l) -gt 0 ]] && \
-      [[ $(kubectl wait --for=condition=Ready --all pods -n honey --timeout=600s && echo "true" || echo "false") == "true" ]]
-
-  webapp:
-    run: |
-      [[ "$(kubectl get pods -l app=webapp -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}')" == "True"  ]]
   
   profilecomplete:
+    machine: dev-machine
     run: |
       [[ "$(kubectl get applicationprofile replicaset-$(kubectl get replicaset -n default -o jsonpath='{.items[0].metadata.name}') -o jsonpath='{.metadata.annotations.kubescape\.io/status}')" == "completed" ]]
 
