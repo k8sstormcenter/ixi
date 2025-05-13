@@ -3875,3 +3875,24 @@ spec:
 ::
 
 
+
+
+## References
+
+- [OCI Image Specification](https://github.com/opencontainers/image-spec)  
+  The specification governing container images, used as the foundation for artifact transport.
+- [binfmt_misc & QEMU Emulation](https://wiki.debian.org/QemuUserEmulation)  
+  Documentation on enabling cross-architecture emulation for binary execution in container.
+
+## Glossary
+
+
+- **Software Bill of Behaviour (SBOB) or (BoB)**  
+  A Software Bill of Behaviors (SBoB) is an emerging concept aimed at capturing and documenting the runtime behavior of software components to enhance system security and threat detection.
+
+
+
+
+
+
+

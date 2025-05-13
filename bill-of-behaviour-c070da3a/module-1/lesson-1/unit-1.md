@@ -1,7 +1,7 @@
 ---
 kind: unit
 
-title: Create a Bill of Behaviour - Setup the app
+title: Create a Bill of Behaviour - 1 Setup the app and produce benign behaviour
 
 name: simple-app-profile
 ---
@@ -9,14 +9,37 @@ name: simple-app-profile
 Pretending we are the supplier company of the software `webapp` , which is a single container php application,
 we will now create a simple BoB for this `webapp`- product.
 
-For this, we need to:  
+For this first Module, we need to:  
  
 * Deploy the application
 * Produce traffic: execute/trigger all known behaviour (by e.g. using a load test or more old-fashioned cypress tests)
-* Profile the benign behaviour
+* Profile (i.e. `record` or `trace`) the benign behaviour
 * Export the profile
   
 
+## UseCase
+We have two different usecases:
+1) Normal anomalies 
+   
+   A CVE is present in the app, or it gets exploited
+
+2) Supply Chain anomalies
+ 
+   The artefact is not the one from the vendor , OR the vendor s supply chain got compromised, OR its a typosquatting OR something else went wrong I.e. the behaviour
+   of the app has something additional in there , very often a beacon or something backdoor. Or just a cryptominer.
+
+   Now: some of these are easy to catch:
+    - cryptominers 
+    - modified utilities (like using a SETUID) 
+    - most sorts of exfiltration
+    - droppers and loaders
+
+for some, a SBOM is sufficient (if your chain of trust is tight). Still, the runtime behaviour could catch things in a 
+orthogonal way. Like two eyes see better than one. 
+
+   Some will be very hard to catch:
+    - A pod accessing service account tokens , even if the app has zero need for one -> this is very noisy
+    - the attack sleeping for very long between infection and exploitation -> it will look more like a normal attack if the correlation between the specific artefact having been deployed and the anomaly are temporarily separated . especially if its targeted (i.e. noone else sees the same thing)
 
 ## Familiarize yourself with this lab and clone the repository
 Make sure, you have this lab open in Chrome. Safari doesnt work. 
@@ -35,7 +58,7 @@ allowing us to argue if running this entire BoB-generation inside CI/CD is an op
 ---
 kind: warning
 ---
-THIS LAB IS ALPHA, live rewrites `could` be going on. 
+THIS LAB IS LIVE, live rewrites `could` be going on. 
 
 This means, the writing on the left here can change in real time. Since you have found this lab, you likely know
 Constanze, and should something happen that you have issue with, please, ping her in your usual communication channel (`icmp` may not be the right one 🤣)
@@ -185,14 +208,7 @@ that the `webapp` could do, but lets keep it simple, for starts.
 
 
 Open a new tab :tab-locator-inline{text='new terminal' machine='dev-machine' :new=true}
-<!--
-First, find the nodeport IP
- ```sh
-export port=$(kubectl describe svc/webapp | grep NodePort | awk '{print $3}' | cut -d '/' -f1)
-echo "NodePort is: $port"
- curl 172.16.0.2:$port/ping.php?ip=172.16.0.2
-while true; do curl 172.16.0.2:$port/ping.php?ip=172.16.0.2; sleep 10; done
-``` -->
+
 Lets test the ping:
 
 ```sh
@@ -218,5 +234,23 @@ There we'll discuss how those deployments can be handled and if everything is `a
 
 (Thanks Ben for pointing this out)
 ::
+
+
+## References
+
+- [Enhance SBOMs with runtime security context by using Datadog Software Composition Analysis](https://www.datadoghq.com/blog/enhance-sboms-application-vulnerability-management/)
+- 
+
+
+## Glossary
+
+
+- **Software Bill of Behaviour (SBOB) or (BoB)**  
+  A Software Bill of Behaviors (SBoB) is an emerging concept aimed at capturing and documenting the runtime behavior of software components to enhance system security and threat detection.
+
+
+
+
+
 
 

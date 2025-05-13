@@ -209,6 +209,18 @@ In the beginning, we should not have any ApplicationProfiles.
 ```sh
 kubectl get applicationprofile -A
 ```
+::simple-task
+---
+:tasks: tasks
+:name:  profilecomplete
+---
+#active
+Profile is still not complete
+
+#completed
+Application profile is now complete
+::
+
 after some time: likely, you ll see something like:
 ```json
 NAMESPACE   NAME         CREATED AT
@@ -224,17 +236,7 @@ kubectl describe applicationprofile replicaset-$rs
 We want to wait until the status is completed
 
 
-<!-- ::simple-task
----
-:tasks: tasks
-:name:  profilecomplete
----
-#active
-Profile is still not complete
 
-#completed
-Application profile is now complete
-:: -->
 
 If the above indicator is `green`, this means that the following event has been reached by kubescape:
 
@@ -265,29 +267,27 @@ Now, we must save this above file onto disk:
 ```sh
 kubectl get applicationprofile replicaset-$rs -o yaml > app-profile-webapp.yaml
 ```
-<!-- 
-## Comparison to recording the profile when the app is already running
 
-Just, because I found it rather insightful, let's do one more thing.
-
-First, check the looping ping is still going on in the other tab, then come back here.
-
-Let's delete the app
-
-
-Go back to the :tab-locator-inline{text='Term 1' name='Term 1'}, where you had that ping-loop and kill it using `ctrl c`. 
-
-
--- ::simple-task
----
-:tasks: tasks
-:name: appprofempty
----
-#active
-Delete all application profiles in case you have any
-
-#completed
-Yay! All clear!
-::  -->
 
 Great job!
+
+
+
+## References
+
+
+- [Kubescape Nodeagent](https://kubescape.io/docs/operator/runtime-threat-detection/)  
+  Documentation on Runtime threat detection as part of the Kubescape Operator
+
+## Glossary
+
+
+- **Software Bill of Behaviour (SBOB) or (BoB)**  
+  A Software Bill of Behaviors (SBoB) is an emerging concept aimed at capturing and documenting the runtime behavior of software components to enhance system security and threat detection.
+
+
+
+
+
+
+
