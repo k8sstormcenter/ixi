@@ -11,10 +11,28 @@ Welcome back to kubernetes. Now, we are switching sides and becoming a `customer
 
 We now use `k3s` for the first time, which is significantly different from the `vendor` setup to showcase how the BoB translates across tech-stacks.
 
-In this first part on the `customer` side, we need to verify and unpack the BoB
+In this first part on the `customer` side, we need to verify and unpack the BoB.
+
+What this means is that there is a part where we pull the artefact and verify the signature.
+Then, we test deploy the application including the BoB and verify the runtime-deployment.
+
+Afterwards, the customer may choose to use the runtime-rules during production or adopt them to their own liking.
+
+__It is crucial, that the vendor can only supply a BoB for a subset of all possible runtime configurations, this part can
+be directly verified during the `BoB test`, the customer is expected to modify the bob.values or merge the bob.yaml into 
+their own environment.__
 
 
-### Diagram: OCI artifacts reconciliation 
+::remark-box
+---
+kind: warning
+---
+__It is crucial, that the vendor can only supply a BoB for a __subset__ of all possible runtime configurations__, this part can
+be directly verified during the `BoB test`, the customer is expected to modify the bob.values or merge the bob.yaml into 
+their own environment.
+::
+
+### Diagram: BoB installation and verification 
 
 ```mermaid
 sequenceDiagram
