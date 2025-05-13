@@ -18,9 +18,7 @@ Then, we test deploy the application including the BoB and verify the runtime-de
 
 Afterwards, the customer may choose to use the runtime-rules during production or adopt them to their own liking.
 
-__It is crucial, that the vendor can only supply a BoB for a subset of all possible runtime configurations, this part can
-be directly verified during the `BoB test`, the customer is expected to modify the bob.values or merge the bob.yaml into 
-their own environment.__
+
 
 
 ::remark-box
@@ -37,29 +35,28 @@ their own environment.
 ```mermaid
 sequenceDiagram
     actor me
-    participant git as OCI<br><br>registry
     participant sc as BoB<br><br>source-controller
+    participant git as OCI<br><br>registry
     participant dc as BoB<br><br>deployment-controller
     participant kube as Kubernetes<br><br>api-server
-    participant ec as Event Receiver
 
-    me->>git: 1. bobctl "install --values"
-    sc->>git: 2. pull artifact
+
+    me->>sc: 1. bobctl "install --values"
+    sc->>git: 2. pull BoB artifact
     sc-->>sc: 3. verify signatures
-    sc->>sc: 4. apply values
-    sc-->>me: 5. confirm generated artefacts
-    me->>dc: 6. initiate deployment
-    dc->>kube: 6. apply kubescape
-    dc->>sc: 8. fetch artifact for revision
-    dc->>dc: 9. extract k8s objects
-    dc-->>dc: 10. customize objects
-    dc->>kube: 11. validate objects
-    dc->>kube: 12. apply objects (ssa)
-    dc-->>kube: 13. delete objects
-    dc-->>kube: 14. wait for readiness
-    dc->>kube: 15. update status for revision
-    dc-->>ec: 16. emit events
-    ec-->>me: 17. send alerts for revision
+    sc-->>sc: 4. unbundle
+    sc->>sc: 5. apply values
+    sc-->>me: 6. confirm generated artefacts
+    me->>dc: 7. initiate deployment
+    dc->>kube: 8. install kubescape nodeagent
+    kube->>dc: 9. confirm kubescape crd and config
+    dc->>kube: 10. apply original BoB
+    dc-->>dc: 11. wait for BoB test
+    kube->>dc: 12. collect test report
+    dc->>me: 13. final test report
+    me-->>dc: 14. adapt BoB
+    dc-->>dc: 15. merge BoB
+    dc->>kube: 16. update BoB for production
 ```
 
 ### Part 1 Verfication
