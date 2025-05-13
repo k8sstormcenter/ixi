@@ -1,9 +1,9 @@
 ---
 kind: unit
 
-title: Signing the artefact and publishing
+title: Publishing the artefact 
 
-name: oci-sign-push
+name: oci-push
 ---
 
 Idea: WIP 
@@ -42,14 +42,10 @@ __Huge thanks to the OpenSource communities!__
 
 
 ## Sketch
-### Authoring artifacts - Ideas for bob-cli
+### Authoring artifacts - Ideas for bobctl
 
-__NOTE__: Better explain bob-artifact
-__NOTE__: This `bobctl` at this moment doesn't exists!
 
-On the client side, `bobctl` provides commands to push and pull security artifacts into OCI artifacts and pushing these artifact to container registries. A bob artifact include tracing policies, attack models, and runtime configurations.
-
-These artifacts can be used in environments like [k8sstormcenter](https://github.com/k8sstormcenter/honeycluster.git) to simulate and analyze threats.
+On the client side, `bobctl` provides commands to bundle and sign security artifacts into OCI artifacts and pushing these artifact to container registries. 
 
 The bobctl CLI commands for managing BoB artifacts are:
 
@@ -70,7 +66,7 @@ The OCI artifacts produced with `bobctl push artifact` have the following custom
 ---
 kind: warning
 ---
-__Question__: C to P: can we have a yaml or does it have to be json?
+__Question__: C to P: Do we need that many different types?
 ::
 
 
@@ -87,10 +83,17 @@ This shows how the BoB OCI artifact is structured:
 ---
 kind: warning
 ---
-__Question__: C to P: kustomize doesnt really work as far as I tested, helm could work - not yet tested
+__Question__: C to P: kustomize doesnt work as far as I tested, helm could work 
 ::
-- An annotations provide extra metadata for humans and tools.
+- An annotation provide extra metadata for humans and tools.
 - A subject specifies a descriptor of another manifest to attach a signature (cosign or notary).
+
+::remark-box
+---
+kind: warning
+---
+__Question__: C to P: I dont understand this diagram
+::
 
 ```mermaid
 graph TD
@@ -137,7 +140,7 @@ Config needs a hash to test integrity of the content of bob artifact folder `.ro
 
 __NOTE__: Add support for different architectures and os's needed? __CR__: Multi-Arch definitely required
 
-The checksum caclulated of the layer.tar.gz:
+The checksum calculated of the layer.tar.gz:
 
 ```text
 computed_digest = sha256(layer.tar.gz)
@@ -201,13 +204,13 @@ graph TD
 __WIP__: Useful Security References from OCI Image Artifacts.
 
 - __OCI Image__: Central artifact being published.
-- __SBOM__: Linked via OCI manifest annotations (typically as attestations or referrers).
-- __CVE Attestation__: Security scan results, often attached via in-toto.
+- __SBOM__: Linked via OCI manifest annotations (typically as attestations or referrers). (NOT IN SCOPE)
+- __CVE Attestation__: Security scan results, often attached via in-toto. (NOT IN SCOPE)
 - __Cosign Signature__: Verifies integrity and authorship of the image.
 - __Bob Artifact__: A custom reference (e.g., bob://...) pointing to further metadata or build context.
-- __Build Provenance__: Describes the build process, tools, and environment used to produce the artifact, following the SLAS -framework.
+- __Build Provenance__: Describes the build process, tools, and environment used to produce the artifact, following the SLAS -framework. (NOT IN SCOPE)
 
-__Note__: All artifacts that are references form the OCI Image must be signed!
+__Note__: All artifacts that are references form the OCI Image `should` be signed! __CR__ we must also allow unsigned `BoBs` for people to get started.
 
 #### POC: Create and bob artifact manually
 
