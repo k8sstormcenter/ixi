@@ -75,10 +75,10 @@ and expand, hover and toggle the 👁️-Icon on `spdx.softwarecomposition.kubes
 the bottom `Watched Objects` . You are now watching for these Application Profiles and no longer need to filter
 
 ## 2 pull down artefact (not yet implemented)
-WIP: 
+WIP: DO NOT EXECUTE THIS LINE
 
 ```sh
-some mystical command like ctr pull
+bobctl install webapp
 ```
 
 We will simply use our images `k8sstormcenter/webapp:latest` and `k8sstormcenter/webapp-t:latest`
@@ -123,9 +123,9 @@ Please, switch back to the original :tab-locator-inline{text='dev-machine' name=
 
 TODO: replace with more production like method.
 
-The `garbage out, patch in` method :
-
-We ll wait until we have an application profile again and we ll throw it away.
+We ll wait until we have an application profile again and we ll throw it away, this is not required if you use
+exactly the same everything on this kubernetes as you did as the vendor. I.e. if the `template-hash` matches you
+dont need to delete it.
 
 
 Lets check the configuration in order to understand if the setup is any different from Module 1:
@@ -151,14 +151,20 @@ kubectl describe applicationprofile replicaset-$rs
 kubectl get applicationProfile replicaset-$rs  -o yaml > ~/originalappprofile.yaml
 ```
 
-now edit that profile (so it keeps it name), but use the content of the one from Module 1!!!
+now edit that profile (so it keeps its name), but use the content of the one from Module 1!!!
+
+```
+python3 bob.py 
+```
+
+which is the equivalent to manually substituting and patching
 
 ```sh   
 echo $rs
 envsubst < /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_applicationprofile_restart.yaml > /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_restart.yaml
 ```
 
-`patch` the ping-profile:
+`patch` the ping-profile: (this may or may not be necessary)
 ```sh
 kubectl delete applicationprofile replicaset-$rs
 ```
@@ -182,22 +188,25 @@ there should be no additional logs, only the stop of the above profile, similar 
 Quick Summary:
 
 We as customer deployed `webapp`, we didnt check its signature, we recorded a profile and threw away that profile by overwriting it with the profile from Module 1, aka `BoB`.
-We did this to trick kubescape into believing, it has recorded the supplied `BoB`  (the metadata of the profile are correct). 
+
 
 ## 6 watch how k3s is different from k8s
 
 Check your looping tab . It should still be doing its thing.
 
-However, did you notice that kubescape isnt showing us any logs?
+However, did you notice that kubescape is showing us logs?
+
+We notice that there is one `syscall` different between `k8s` and `k3s`, which is the gettid.
 
 Given our exessively limited `benign behaviour`, this isnt super interesting.
-
+<!-- 
 Since about `90` percent of the files are linked libs that are loaded at startup: lets
 restart the `pod` NOT the `deployment` . 
 
 
-If we want kubescape to ignore the new deployment: we need the `deployment` to retain the same name.
-WE ARE FIRST, HOWEVER, CHANGE THE NAME and rerecord the profile
+
+
+
 
 That way we can explicitely compare if we missed something.
 
@@ -819,4 +828,4 @@ now edit that profile (so it keeps it name), but use the content of the one from
 kubectl apply -f /home/laborant/honeycluster/traces/kubescape-verify/attacks/webapp/bob_restart.yaml
 ```
 
-and now we just kill the pod itself (not the replicaset)
+and now we just kill the pod itself (not the replicaset) -->
