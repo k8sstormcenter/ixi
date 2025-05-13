@@ -40,37 +40,15 @@ I DON'T recommend the Explorer on the 3-node kubernetes cluster, its too slow ->
 
 </div>
 
-
-<!-- ::simple-task
+::image-box
 ---
-:tasks: tasks
-:name: make
+:src: __static__/kubescapearch.png
+:alt: 'Kubescape Arch'
 ---
-#active
-Waiting for all pods to come up
-
-#completed
-Congrats! 
-:: 
-
-You can watch the pods becoming blue and select those items you d like to `watch` with the `eye` icon.
--->
- <!-- ::image-box
----
-:src: module-1/lesson-1/img/explorer.png
-:alt: 'This image is still not found - Known issue'
----
-:: 
-::slide-show
----
-slides:
-- image: __static__/explorer.png
-  alt: "test1 - working on getting paths to CDN right..."
-- image: __static__/cover.png
-  alt: "test2 is it finding the png?"
----
+_Kubescape Architecture_
 ::
---> 
+
+
 If all kubescape pods are healthy, we can move on and inspect our `ApplicationProfile`, that will serve as base for our BoB. (if any of the pods are unhealthy, the `ApplicationProfile` is likely incomplete and you should not use it)
 
 ```bash
@@ -209,6 +187,7 @@ In the beginning, we should not have any ApplicationProfiles.
 ```sh
 kubectl get applicationprofile -A
 ```
+
 ::simple-task
 ---
 :tasks: tasks
