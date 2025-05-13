@@ -5,7 +5,7 @@ title: Consume the app on client cluster
 
 name: consume-app-install
 ---
-
+__THIS PART WILL SHOW HOW KUBESCAPE WORKS FOR THE CUSTOMER DURING BOBTEST__
 Pretending we are now the consumer/user of `webapp` , we have our own infrastructure.
 This consumer uses k3s, which is another slim kubernetes flavour from a different vendor than k0s.
 
@@ -190,25 +190,20 @@ Quick Summary:
 We as customer deployed `webapp`, we didnt check its signature, we recorded a profile and threw away that profile by overwriting it with the profile from Module 1, aka `BoB`.
 
 
-## 6 watch how k3s is different from k8s
+## 6 watch how k3s is different from k8s BOB-MERGE
 
-Check your looping tab . It should still be doing its thing.
+We are still simulating the `benign traffic` using the loop TODO C : use the bob-test deployment instead. Its already in git.
 
-However, did you notice that kubescape is showing us logs?
-
-We notice that there is one `syscall` different between `k8s` and `k3s`, which is the gettid.
-
-Given our exessively limited `benign behaviour`, this isnt super interesting.
-<!-- 
-Since about `90` percent of the files are linked libs that are loaded at startup: lets
-restart the `pod` NOT the `deployment` . 
+We already see one interesting log and
+notice that there is one `syscall` different between `k8s` and `k3s`, which is the `gettid`.
 
 
 
 
 
 
-That way we can explicitely compare if we missed something.
+## 7 Discuss what happens if the profile is missing the shutdown
+
 
 Open a third terminal and:
 

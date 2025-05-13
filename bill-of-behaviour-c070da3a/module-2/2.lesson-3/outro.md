@@ -7,6 +7,7 @@ title: Releaseing the BoB into production
 name: bob-prod
 slug: 2
 ---
+__THIS PART WILL SHOW HOW BOBCTL IMPLEMENTS BOB-INSTALL__
 
 Assuming you are the customer, and all the `testing` and `merging` has been concluded.
 

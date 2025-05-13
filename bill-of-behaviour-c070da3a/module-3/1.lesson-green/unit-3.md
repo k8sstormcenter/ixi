@@ -5,7 +5,7 @@ title: Some Usecases
 
 name: bob-usecase
 ---
-
+__THIS PART WILL SHOW HOW MORE ADVANCED USECASES WORK__
 WIP: currently copy paste from module 1 lesson 3.
 
 ``` json

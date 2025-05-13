@@ -7,6 +7,8 @@ name: bob-test
 slug: 1
 ---
 
+__THIS PART WILL SHOW HOW BOBCTL IMPLEMENTS BOB-TEST__
+
 Welcome back to kubernetes. Now, we are switching sides and becoming a `customer` who uses the `webapp` product.
 
 We now use `k3s` for the first time, which is significantly different from the `vendor` setup to showcase how the BoB translates across tech-stacks.

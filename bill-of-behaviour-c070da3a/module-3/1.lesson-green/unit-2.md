@@ -6,7 +6,7 @@ title: Use the Bill of Behaviour
 name: bob-use
 ---
 
-
+__THIS PART WILL SHOW HOW KUBESCAPE WORKS FOR THE CUSTOMER DURING BOBTEST IF A TAMPERING IS FOUND__
 Now with tampering
 ## 3 deploy artefact 
 
