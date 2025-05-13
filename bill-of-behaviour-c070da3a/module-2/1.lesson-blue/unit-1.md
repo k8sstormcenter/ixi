@@ -204,3 +204,6 @@ We now have
 - bob.yaml # the parametrized ApplicationProfile
 - bob.values # the Parameters
 - deployment.yaml # sample Deployment incl a LoadTest
+  
+
+We will now pretend a `helm` like management of these artefacts: next step -> stuff them into an OCI registry

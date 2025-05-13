@@ -11,16 +11,34 @@ Idea: WIP
 * use co-sign or oras
 * determine choice of key (can we use keyless?)
 * attestation: choose predicate type
-* verfication: can tools like OPA verfiy predicate-type= bob.spdx.json
+* verification: can tools like OPA verfiy predicate-type= bob.spdx.json
 * transparency: do we need public signing records, like recor?
+  
+### Diagram of the publication of a BoB 
 
-__Huge thanks to the Flux and KubeScape communities!__
-The artifact handling approach we've implemented is directly inspired by your pioneering work.
+```mermaid
+sequenceDiagram
+    actor me
+    participant sc as BoB<br><br>source-controller 
+    participant ks as BoB<br><br>Profiler
+    participant kube as Kubernetes<br><br>eBPF
+    participant git as OCI<br><br>registry
 
-It builds upon Flux's support for OCI artifacts with signing, providing a secure and standardized way to distribute and verify content.
-<!-- It’s also deeply influenced by the Falco project's rule handling, which helped shape our vision for flexible and policy-driven artifact consumption. -->
+    me->>sc: 1. provide application
+    me->>sc: 2. provide unit test for benign behavior
+    ks-->>ks: 3. install profiler
+    me-->>kube: 4. deploy application
+    me-->>kube: 5. deploy unit test
+    ks->>kube: 6. profile application
+    ks-->>me: 7. download applicationProfile
+    me->>sc: 8. extract parametrization
+    me->>sc: 9. supply parametrized templates
+    sc-->>sc: 10. bundle 
+    sc->>sc: 11. sign
+    sc->>git: 12. push to registry
+```
 
-Your innovations and open collaboration continue to inspire and enable the broader cloud-native ecosystem. Thank you for leading the way! 
+__Huge thanks to the OpenSource communities!__
 
 
 ## Sketch
