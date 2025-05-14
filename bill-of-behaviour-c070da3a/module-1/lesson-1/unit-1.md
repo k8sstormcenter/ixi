@@ -41,7 +41,66 @@ orthogonal way. Like two eyes see better than one.
     - A pod accessing service account tokens , even if the app has zero need for one -> this is very noisy
     - the attack sleeping for very long between infection and exploitation -> it will look more like a normal attack if the correlation between the specific artefact having been deployed and the anomaly are temporarily separated . especially if its targeted (i.e. noone else sees the same thing)
 
-## Step 1: Familiarize yourself with this lab and clone the repository
+
+
+  
+### Diagram of vendor publication of a BoB 
+
+```mermaid
+sequenceDiagram
+    actor me
+    participant sc as BoB<br><br>source-controller 
+    participant ks as BoB<br><br>Profiler
+    participant kube as Kubernetes<br><br>eBPF
+    participant git as OCI<br><br>registry
+
+    me->>sc: 1. provide application
+    me->>sc: 2. provide unit test for benign behavior
+    ks-->>ks: 3. install profiler
+    me-->>kube: 4. deploy application
+    me-->>kube: 5. deploy unit test
+    ks->>kube: 6. profile application
+    ks-->>me: 7. download applicationProfile
+    me->>sc: 8. extract parametrization
+    me->>sc: 9. supply parametrized templates
+    sc-->>sc: 10. bundle 
+    sc->>sc: 11. sign
+    sc->>git: 12. push to registry
+```
+
+
+### Diagram of customer BoB installation and verification 
+
+```mermaid
+sequenceDiagram
+    actor me
+    participant sc as BoB<br><br>source-controller
+    participant git as OCI<br><br>registry
+    participant dc as BoB<br><br>deployment-controller
+    participant kube as Kubernetes<br><br>api-server
+
+
+    me->>sc: 1. bobctl "install --values"
+    sc->>git: 2. pull BoB artifact
+    sc-->>sc: 3. verify signatures
+    sc-->>sc: 4. unbundle
+    sc->>sc: 5. apply values
+    sc-->>me: 6. confirm generated artefacts
+    me->>dc: 7. initiate deployment
+    dc->>kube: 8. install kubescape nodeagent
+    kube->>dc: 9. confirm kubescape crd and config
+    dc->>kube: 10. apply original BoB
+    dc-->>dc: 11. wait for BoB test
+    kube->>dc: 12. collect test report
+    dc->>me: 13. final test report
+    me-->>dc: 14. adapt BoB
+    dc-->>dc: 15. merge BoB
+    dc->>kube: 16. update BoB for production
+```
+
+
+
+## Familiarize yourself with this lab and clone the repository
 Make sure, you have this lab open in Chrome. Safari doesnt work. 
 
 Please hover over the bottom right corner of the below box, when the `Copy` symbol appears, click it and `Paste` it into the right hand `terminal` (you need to activate the playground first). In Windows, you need to right click or configure what keybindings your browser is listening to.
@@ -239,7 +298,7 @@ There we'll discuss how those deployments can be handled and if everything is `a
 ## References
 
 - [Enhance SBOMs with runtime security context by using Datadog Software Composition Analysis](https://www.datadoghq.com/blog/enhance-sboms-application-vulnerability-management/)
-- 
+  
 
 
 ## Glossary
