@@ -41,7 +41,7 @@ orthogonal way. Like two eyes see better than one.
     - A pod accessing service account tokens , even if the app has zero need for one -> this is very noisy
     - the attack sleeping for very long between infection and exploitation -> it will look more like a normal attack if the correlation between the specific artefact having been deployed and the anomaly are temporarily separated . especially if its targeted (i.e. noone else sees the same thing)
 
-## Familiarize yourself with this lab and clone the repository
+## Step 1: Familiarize yourself with this lab and clone the repository
 Make sure, you have this lab open in Chrome. Safari doesnt work. 
 
 Please hover over the bottom right corner of the below box, when the `Copy` symbol appears, click it and `Paste` it into the right hand `terminal` (you need to activate the playground first). In Windows, you need to right click or configure what keybindings your browser is listening to.
@@ -174,7 +174,7 @@ Webapp is running
 ::
 ---
 
-If you prefer to manually checkout your app is up:
+If you prefer to manually check your app is up:
 ```sh
 kubectl get pods -l app=webapp -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'
 ```
