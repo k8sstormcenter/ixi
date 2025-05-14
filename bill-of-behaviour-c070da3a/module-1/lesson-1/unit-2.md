@@ -75,16 +75,8 @@ kubectl describe RuntimeRuleAlertBinding all-rules-all-pods
 ```
 
 
-So, you first wanna remember the exclusions that are set in the `rules`:
-<!-- ::remark-box
----
-kind: warning
----
-TODO: remove the ignoreMounts/Prefixes by default, havnt found how to do that elegantly
-```sh
-kubectl edit RuntimeRuleAlertBinding all-rules-all-pods
-```
-:: -->
+So, first note how the exclusions are set in the `rules`.
+And, there shouldnt be any:
 
 ```yaml
   namespaceSelector:

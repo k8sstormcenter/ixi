@@ -233,7 +233,7 @@ Webapp is running
 ::
 ---
 
-If you prefer to manually checkout your app is up:
+If you prefer to manually check your app is up:
 ```sh
 kubectl get pods -l app=webapp -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}'
 ```
@@ -298,7 +298,7 @@ There we'll discuss how those deployments can be handled and if everything is `a
 ## References
 
 - [Enhance SBOMs with runtime security context by using Datadog Software Composition Analysis](https://www.datadoghq.com/blog/enhance-sboms-application-vulnerability-management/)
-- 
+  
 
 
 ## Glossary
