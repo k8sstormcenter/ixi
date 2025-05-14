@@ -235,10 +235,10 @@ mkdir -p bob-artifact
 cd bob-artifact
 # upload applicationprofile
 cp /home/laborant/honeycluster/traces/kubescape-verify/attacks/bob/bob_generated.yaml .
-cp /home/laborant/honeycluster/traces/kubescape-verify/attacks/bob/deploy_test.yaml .
+cp /home/laborant/honeycluster/traces/kubescape-verify/attacks/bob/bob.test .
 cp /home/laborant/honeycluster/traces/kubescape-verify/attacks/bob/bob_generated.values .
 
-# Add metafile with License and author?
+# Add metafile with License and author? CR: so you mean to state who wrote the bob, rather than who wrote the software?
 # https://specs.opencontainers.org/image-spec/annotations/
 # https://spdx.org/licenses/
 # cat >manifest.yaml <<EOF
@@ -249,7 +249,6 @@ cp /home/laborant/honeycluster/traces/kubescape-verify/attacks/bob/bob_generated
 #   licenses: Apache-2.0
 # EOF
 
-__NOTE__ CR:  we can probably use the kubescape manifest for now. Lets test
 
 # package with tar und zip
 BOB_PACKAGE=app-profile-webapp.tar.gz 
@@ -421,9 +420,9 @@ oras attach 127.0.0.1:5000/k8sstormcenter/webapp:latest --plain-http  \
   --artifact-type "application/vnd.bob.artifact+yaml" \
   --annotation "org.opencontainers.artifact.description=BoB Security Policy" \
    \
- bob_generated.yaml:application/yaml
- deploy_test.yaml:application/yaml CR TODO can we append all 3 files
- bob_generated.values:application/text CR CHECK TODO
+ bob_generated.yaml:application/yaml \
+ bob.test:application/yaml \
+ bob_generated.values:application/text 
 
 # ixi registry
 oras attach registry.iximiuz.com/k8sstormcenter/webapp:latest  \
@@ -431,12 +430,16 @@ oras attach registry.iximiuz.com/k8sstormcenter/webapp:latest  \
   --annotation "org.opencontainers.artifact.description=BoB Security Policy" \
    \
   bob-artifact.yaml:application/yaml
-✓ Uploaded  application/vnd.oci.empty.v1+json                                            2/2  B 100.00%    9ms
+✓ Exists    application/vnd.oci.empty.v1+json                   2/2  B 100.00%     0s
   └─ sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
-✓ Uploaded  bob-artifact.yaml                                                          18/18 KB 100.00%    8ms
-  └─ sha256:39b2f67bfb5fecae7beb30c73e6b2c2512f877ecd25d3827778efd4bd122197e
-✓ Uploaded  application/vnd.oci.image.manifest.v1+json                               813/813  B 100.00%   14ms
-  └─ sha256:191a03218f7f1200232265b7cde605daf6070f0d3e873e34f6ed9399d62d0322
+✓ Uploaded  bob.test                                      1.62/1.62 KB 100.00%    5ms
+  └─ sha256:16b90fdcca596952bfb053b5454eef720a2dde8b7278f28eff43520d3cb6b60e
+✓ Uploaded  bob_generated.values                            192/192  B 100.00%    6ms
+  └─ sha256:6dabf2e0e01a3eb39fbea2df74445842e3a73d7429f27fb7339b70e890541e3e
+✓ Exists    bob_generated.yaml                            18.2/18.2 KB 100.00%     0s
+  └─ sha256:8f956060effdd6df20c9c49b5f6f4c80e3b7efdf7c49cb69fdbd403530c1a4c0
+✓ Uploaded  application/vnd.oci.image.manifest.v1+json    1.17/1.17 KB 100.00%    5ms
+  └─ sha256:52456e38289837346a7d6eb4647fb1efd1b7efb2000e3f64a9ddab049f946b4e
 Attached to [registry] registry.iximiuz.com/k8sstormcenter/webapp@sha256:dab18b4d7784d33644f02f88e4df384c37cfc8a4c038e345af24d6d666d12e0e
 Digest: sha256:191a03218f7f1200232265b7cde605daf6070f0d3e873e34f6ed9399d62d0322
 ```
@@ -459,13 +462,19 @@ ghcr.io/k8sstormcenter/webapp@sha256:e323014ec9befb76bc551f8cc3bf158120150e2e277
 
 # discover referrer
 # zot registry
-oras discover 127.0.0.1:5000/k8sstormcenter/webapp:latest plain-http
-
-# ixi registry
-oras discover registry.iximiuz.com/k8sstormcenter/webapp:latest 
-registry.iximiuz.com/k8sstormcenter/webapp@sha256:dab18b4d7784d33644f02f88e4df384c37cfc8a4c038e345af24d6d666d12e0e
+oras discover 127.0.0.1:5000/k8sstormcenter/webapp:latest --plain-http
+127.0.0.1:5000/k8sstormcenter/webapp@sha256:dab18b4d7784d33644f02f88e4df384c37cfc8a4c038e345af24d6d666d12e0e
 └── application/vnd.bob.artifact+yaml
-    └── sha256:191a03218f7f1200232265b7cde605daf6070f0d3e873e34f6ed9399d62d0322
+    ├── sha256:ff905f36f27f3f82e62240b4d0ca4a7c22cb0dff3bc5039e9302d5591f628bfc
+    ├── sha256:d61f3da3f2406061469718b3eb99b30b6a393673047ee4a493d4d94dc97b36a8
+    ├── sha256:52456e38289837346a7d6eb4647fb1efd1b7efb2000e3f64a9ddab049f946b4e
+    └── sha256:4c2e430fc6025297ac03653b761ee6f4f1d8612cd081bbeb986e0bd0e5776072
+
+# # ixi registry
+# oras discover registry.iximiuz.com/k8sstormcenter/webapp:latest 
+# registry.iximiuz.com/k8sstormcenter/webapp@sha256:dab18b4d7784d33644f02f88e4df384c37cfc8a4c038e345af24d6d666d12e0e
+# └── application/vnd.bob.artifact+yaml
+#     └── sha256:191a03218f7f1200232265b7cde605daf6070f0d3e873e34f6ed9399d62d0322
 ```
 
 You’ll see your Bob artifact listed as a referrer to that image.
@@ -487,21 +496,20 @@ Show the manifest from the new bob artifact to refer the image.
 bob-artifact.yaml is the artifact that is referenced to the image.
 
 ```shell
-# ixi registry
-# request bob-artifact
-oras discover  \
---artifact-type application/yaml \
-registry.iximiuz.com/k8sstormcenter/webapp@sha256:191a03218f7f1200232265b7cde605daf6070f0d3e873e34f6ed9399d62d0322
+# # ixi registry
+# # request bob-artifact
+# oras discover  \
+# --artifact-type application/yaml \
+# registry.iximiuz.com/k8sstormcenter/webapp@sha256:191a03218f7f1200232265b7cde605daf6070f0d3e873e34f6ed9399d62d0322
 
 # zot registry
-oras discover --plain-http \
---artifact-type application/yaml \
-127.0.0.1:5000/k8sstormcenter/webapp@sha256:191a03218f7f1200232265b7cde605daf6070f0d3e873e34f6ed9399d62d0322
+oras discover --plain-http --artifact-type application/yaml 127.0.0.1:5000/k8sstormcenter/webapp:latest
+127.0.0.1:5000/k8sstormcenter/webapp@sha256:dab18b4d7784d33644f02f88e4df384c37cfc8a4c038e345af24d6d666d12e0e
 
-# request image
-# ixi registry
-curl -s -H "Accept: application/vnd.oci.image.index.v1+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json" \
-https://registry.iximiuz.com/v2/k8sstormcenter/webapp/manifests/sha256:dab18b4d7784d33644f02f88e4df384c37cfc8a4c038e345af24d6d666d12e0e |jq .
+# # request image
+# # ixi registry
+# curl -s -H "Accept: application/vnd.oci.image.index.v1+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json" \
+# https://registry.iximiuz.com/v2/k8sstormcenter/webapp/manifests/sha256:dab18b4d7784d33644f02f88e4df384c37cfc8a4c038e345af24d6d666d12e0e |jq .
 
 # zot registry
 curl -s -H "Accept: application/vnd.oci.image.index.v1+json, application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json" \
@@ -533,9 +541,12 @@ curl -sL -H "Accept: application/json" \
  https://registry.iximiuz.com/k8sstormcenter/webapp/referrers/sha256:dab18b4d7784d33644f02f88e4df384c37cfc8a4c038e345af24d6d666d12e0e?artifactType=application/vnd.bob.artifact+yaml
 # 404
 
+
+# I like it :)
 curl -sL -H "Accept: application/vnd.oci.image.index.v1+json"   \
  127.0.0.1:5000/v2/k8sstormcenter/webapp/referrers/sha256:dab18b4d7784d33644f02f88e4df384c37cfc8a4c038e345af24d6d666d12e0e ?artifactType=application/vnd.bob.artifact+yaml \
   | jq .
+
 
 oras manifest fetch --plain-http 127.0.0.1:5000/k8sstormcenter/webapp@sha256:dab18b4d7784d33644f02f88e4df384c37cfc8a4c038e345af24d6d666d12e0e
 # no subject!
