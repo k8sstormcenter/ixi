@@ -104,7 +104,7 @@ A bob's tale:
 
 
 ```bash
-sudo apt install python3-yaml  
+sudo apt -y install python3-yaml  
 ```
 ```bash
 python3 bob.py 
@@ -148,8 +148,16 @@ metadata:
   creationTimestamp: '2025-05-12T12:45:42Z'
 ```
 
+TODO: during parsing, remove labels and annotations that include timestamps
 
 
+::remark-box
+---
+kind: warning
+---
+The template_hash will actually remain the same __if__ the pod spec on customer side is identical. 
+Which can be the case, but, in general, is not.
+::
 
 Now, we have simply substituted out the CRD header so we can `transfer` it .
 I suggest, we have `variables` and `defaults` with a well-defined precedence.
@@ -203,7 +211,7 @@ given that the port is different, this might already trigger an alert.
 We now have
 - bob.yaml # the parametrized ApplicationProfile
 - bob.values # the Parameters
-- deployment.yaml # sample Deployment incl a LoadTest
+- bob.test # sample Deployment incl a LoadTest
   
 
 We will now pretend a `helm` like management of these artefacts: next step -> stuff them into an OCI registry
