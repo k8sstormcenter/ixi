@@ -153,8 +153,10 @@ TODO C: we need to collect the kubescape output and present it to the user, e.g.
 ::
 
 in this case, our customer , on preprod, would now add the allowed syscall into the bob:
-```
-kubectl patch applicationprofile replicaset-webapp-d87cdd796 --type='json' -p='[{"op": "add", "path": "/spec/containers/0/syscalls/-", "value":"gettid"}]'
+```sh
+kubectl patch applicationprofile \
+replicaset-webapp-d87cdd796 --type='json'\
+ -p='[{"op": "add", "path": "/spec/containers/0/syscalls/-", "value":"gettid"}]'
 ```
 
 

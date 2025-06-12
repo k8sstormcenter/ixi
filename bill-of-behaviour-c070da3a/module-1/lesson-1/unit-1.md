@@ -141,8 +141,7 @@ You are now looking at this example task as finished
 ```bash
 git clone https://github.com/k8sstormcenter/honeycluster.git
 cd honeycluster
-git checkout 162-write-bob-testscript-for-anyone-to-contribute-a-bob-for-the-pingapps 
-make storage kubescape-bob-kind
+make storage kubescape
 ```
 ::simple-task
 ---
